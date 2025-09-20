@@ -1,18 +1,3 @@
-// import React from "react";
-
-// function Dashboard() {
-//   return (
-//     <div style={{ textAlign: "center", marginTop: "100px" }}>
-//       <h2>Welcome Admin 🎉</h2>
-    
-//     </div>
-//   );
-// }
-
-// export default Dashboard;
-
-
-
 import React, { useState, useEffect } from "react";
 
 function Dashboard() {
@@ -20,54 +5,82 @@ function Dashboard() {
   const [branch, setBranch] = useState("Cyber Security");
   const [internalExam, setInternalExam] = useState("");
   const [monthYear, setMonthYear] = useState("");
-  const [subjects, setSubjects] = useState([]);
+  const [availableSubjects, setAvailableSubjects] = useState([]); // Subjects from backend
+  const [selectedSubjects, setSelectedSubjects] = useState([]);   // Selected subjects for exam
 
   // Fetch subjects from backend when semester changes
   useEffect(() => {
     if (semester) {
-      fetch(`/api/subjects?sem=${semester}`)
+      fetch(`http://localhost:8080/exambackend/GetSubjectsServlet?sem=${semester}`)
         .then(res => res.json())
-        .then(data => setSubjects(data))
-        .catch(err => console.error(err));
+        .then(data => {
+          setAvailableSubjects(data);
+          setSelectedSubjects([]); // Clear selected subjects when semester changes
+        })
+        .catch(err => console.error('Error fetching subjects:', err));
     } else {
-      setSubjects([]);
+      setAvailableSubjects([]);
+      setSelectedSubjects([]);
     }
   }, [semester]);
 
-  const handleSubjectChange = (index, field, value) => {
-    const updatedSubjects = [...subjects];
-    updatedSubjects[index][field] = value;
-    setSubjects(updatedSubjects);
+  const handleSubjectSelection = (subjectCode, isSelected) => {
+    if (isSelected) {
+      // Add subject to selected list
+      const subjectToAdd = availableSubjects.find(sub => sub.code === subjectCode);
+      if (subjectToAdd) {
+        setSelectedSubjects(prev => [...prev, subjectToAdd]);
+      }
+    } else {
+      // Remove subject from selected list
+      setSelectedSubjects(prev => prev.filter(sub => sub.code !== subjectCode));
+    }
   };
 
-  const addSubjectRow = () => {
-    setSubjects([...subjects, { code: "", name: "" }]);
-  };
-
-  const removeSubjectRow = (index) => {
-    const updatedSubjects = subjects.filter((_, i) => i !== index);
-    setSubjects(updatedSubjects);
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Future backend API call
+
+    if (selectedSubjects.length === 0) {
+      alert("Please select at least one subject!");
+      return;
+    }
+
     const payload = {
-      semester,
+      semester: parseInt(semester),
       branch,
       internalExam,
       monthYear,
-      subjects
+      subjects: selectedSubjects
     };
-    console.log("Submitting Exam Session:", payload);
-    alert("Exam Session submitted! (Backend integration pending)");
+
+    try {
+      const response = await fetch('http://localhost:8080/exambackend/AddExamSessionServlet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      console.log("Exam Session submitted successfully:", result);
+      alert("Exam Session submitted successfully!");
+
+      // Reset form
+      setSemester("");
+      setInternalExam("");
+      setMonthYear("");
+      setSelectedSubjects([]);
+
+    } catch (error) {
+      console.error('Error submitting exam session:', error);
+      alert("Error submitting exam session. Please check console for details.");
+    }
   };
 
   return (
     <div style={{ padding: "20px", maxWidth: "900px", margin: "20px auto" }}>
       <h2 style={{ textAlign: "center" }}>Welcome Admin 🎉</h2>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div style={{ marginBottom: "15px" }}>
           <label>Semester: </label>
           <select value={semester} onChange={e => setSemester(e.target.value)} required>
             <option value="">Select Semester</option>
@@ -78,7 +91,7 @@ function Dashboard() {
           </select>
         </div>
 
-        <div>
+        <div style={{ marginBottom: "15px" }}>
           <label>Branch: </label>
           <select value={branch} onChange={e => setBranch(e.target.value)} required>
             <option value="Cyber Security">Cyber Security</option>
@@ -87,7 +100,7 @@ function Dashboard() {
           </select>
         </div>
 
-        <div>
+        <div style={{ marginBottom: "15px" }}>
           <label>Internal Exam: </label>
           <select value={internalExam} onChange={e => setInternalExam(e.target.value)} required>
             <option value="">Select Internal Exam</option>
@@ -96,49 +109,53 @@ function Dashboard() {
           </select>
         </div>
 
-        <div>
+        <div style={{ marginBottom: "15px" }}>
           <label>Month & Year: </label>
-          <input type="month" value={monthYear} onChange={e => setMonthYear(e.target.value)} required />
+          <input
+            type="month"
+            value={monthYear}
+            onChange={e => setMonthYear(e.target.value)}
+            required
+          />
         </div>
 
-        <h3>Subject List</h3>
-        <table style={{ width: "100%", marginBottom: "20px", borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th style={{ border: "1px solid black" }}>Subject Code</th>
-              <th style={{ border: "1px solid black" }}>Subject Name</th>
-              <th style={{ border: "1px solid black" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {subjects.map((sub, index) => (
-              <tr key={index}>
-                <td style={{ border: "1px solid black" }}>
-                  <input
-                    type="text"
-                    value={sub.code}
-                    onChange={e => handleSubjectChange(index, "code", e.target.value)}
-                    required
-                  />
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <input
-                    type="text"
-                    value={sub.name}
-                    onChange={e => handleSubjectChange(index, "name", e.target.value)}
-                    required
-                  />
-                </td>
-                <td style={{ border: "1px solid black" }}>
-                  <button type="button" onClick={() => removeSubjectRow(index)}>Remove</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {availableSubjects.length > 0 && (
+          <>
+            <h3>Select Subjects for Exam</h3>
+            <div style={{ marginBottom: "20px", maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
+              {availableSubjects.map((subject) => (
+                <div key={subject.code} style={{ marginBottom: "10px" }}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={selectedSubjects.some(s => s.code === subject.code)}
+                      onChange={(e) => handleSubjectSelection(subject.code, e.target.checked)}
+                      style={{ marginRight: "10px" }}
+                    />
+                    {subject.code} - {subject.name}
+                  </label>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-        <button type="button" onClick={addSubjectRow} style={{ marginRight: "10px" }}>Add Subject</button>
-        <button type="submit">Submit Exam Session</button>
+        {selectedSubjects.length > 0 && (
+          <>
+            <h3>Selected Subjects for Exam</h3>
+            <ul>
+              {selectedSubjects.map((subject, index) => (
+                <li key={index}>
+                  {subject.code} - {subject.name}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <button type="submit" disabled={selectedSubjects.length === 0}>
+          Submit Exam Session
+        </button>
       </form>
     </div>
   );
