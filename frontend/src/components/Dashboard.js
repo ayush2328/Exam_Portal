@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { apiService } from "../services/api";  // ✅ CORRECT PATH
+import { apiService } from "../services/api";
+import "./Dashboard.css";  // ✅ YEH LINE ADD KARO
 
 function Dashboard() {
   const [semester, setSemester] = useState("");
@@ -19,18 +20,12 @@ function Dashboard() {
 
   // Months list
   const months = [
-    { value: "01", name: "January" },
-    { value: "02", name: "February" },
-    { value: "03", name: "March" },
-    { value: "04", name: "April" },
-    { value: "05", name: "May" },
-    { value: "06", name: "June" },
-    { value: "07", name: "July" },
-    { value: "08", name: "August" },
-    { value: "09", name: "September" },
-    { value: "10", name: "October" },
-    { value: "11", name: "November" },
-    { value: "12", name: "December" }
+    { value: "01", name: "January" }, { value: "02", name: "February" }, 
+    { value: "03", name: "March" }, { value: "04", name: "April" }, 
+    { value: "05", name: "May" }, { value: "06", name: "June" }, 
+    { value: "07", name: "July" }, { value: "08", name: "August" }, 
+    { value: "09", name: "September" }, { value: "10", name: "October" }, 
+    { value: "11", name: "November" }, { value: "12", name: "December" }
   ];
 
   // Generate available dates when month and year are selected
@@ -44,13 +39,11 @@ function Dashboard() {
     }
   }, [month, year]);
 
-  // Fetch subjects from backend when semester changes - USING CORRECT API
+  // Fetch subjects from backend when semester changes
   useEffect(() => {
     if (semester) {
       setLoading(true);
       setError("");
-
-      // USING API SERVICE INSTEAD OF DIRECT FETCH
       apiService.getSubjects(semester)
         .then(data => {
           setAvailableSubjects(data);
@@ -109,7 +102,6 @@ function Dashboard() {
       return;
     }
 
-    // Validate all subjects have date and session
     const incompleteSubjects = selectedSubjects.filter(subject =>
       !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
     );
@@ -119,7 +111,6 @@ function Dashboard() {
       return;
     }
 
-    // For each selected subject, submit individually
     try {
       const submissionPromises = selectedSubjects.map(async (subject) => {
         const examData = {
@@ -128,11 +119,9 @@ function Dashboard() {
           examTime: subjectSessions[subject.code].session,
           semester: parseInt(semester)
         };
-
         return await apiService.addExamSession(examData);
       });
 
-      // Wait for all submissions to complete
       const results = await Promise.all(submissionPromises);
       console.log("All exam sessions submitted successfully:", results);
       alert(`Successfully submitted ${selectedSubjects.length} exam session(s)!`);
@@ -152,15 +141,17 @@ function Dashboard() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "1000px", margin: "20px auto" }}>
-      <h2 style={{ textAlign: "center" }}>Welcome Admin 🎉</h2>
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h2>Welcome Admin </h2>
+      </div>
 
-      {error && <div style={{ color: "red", textAlign: "center", marginBottom: "15px" }}>{error}</div>}
+      {error && <div className="error-message">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px", display: "flex", gap: "20px", flexWrap: "wrap" }}>
-          <div>
-            <label>Semester: </label>
+      <form onSubmit={handleSubmit} className="dashboard-form">
+        <div className="form-controls">
+          <div className="control-group">
+            <label>Semester:</label>
             <select value={semester} onChange={e => setSemester(e.target.value)} required>
               <option value="">Select Semester</option>
               <option value="1">1st</option>
@@ -170,8 +161,8 @@ function Dashboard() {
             </select>
           </div>
 
-          <div>
-            <label>Branch: </label>
+          <div className="control-group">
+            <label>Branch:</label>
             <select value={branch} onChange={e => setBranch(e.target.value)} required>
               <option value="Cyber Security">Cyber Security</option>
               <option value="CSE">CSE</option>
@@ -179,8 +170,8 @@ function Dashboard() {
             </select>
           </div>
 
-          <div>
-            <label>Internal Exam: </label>
+          <div className="control-group">
+            <label>Internal Exam:</label>
             <select value={internalExam} onChange={e => setInternalExam(e.target.value)} required>
               <option value="">Select Internal Exam</option>
               <option value="1st Internal">1st Internal</option>
@@ -188,8 +179,8 @@ function Dashboard() {
             </select>
           </div>
 
-          <div>
-            <label>Year: </label>
+          <div className="control-group">
+            <label>Year:</label>
             <select value={year} onChange={e => setYear(e.target.value)} required>
               {years.map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -197,8 +188,8 @@ function Dashboard() {
             </select>
           </div>
 
-          <div>
-            <label>Month: </label>
+          <div className="control-group">
+            <label>Month:</label>
             <select value={month} onChange={e => setMonth(e.target.value)} required>
               <option value="">Select Month</option>
               {months.map(m => (
@@ -209,48 +200,60 @@ function Dashboard() {
         </div>
 
         {loading ? (
-          <p>Loading subjects...</p>
+          <p className="loading-text">Loading subjects...</p>
         ) : availableSubjects.length > 0 ? (
-          <>
-            <h3>Select Subjects for Exam ({availableSubjects.length} subjects available)</h3>
-            <div style={{ marginBottom: "20px", maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
+          <div className="subjects-section">
+
+           <div className="heading_SubjectSection">
+                 <h3 className="section-title">
+                  Select Subjects for Exam
+              <span className="selection-count">{availableSubjects.length} subjects</span>
+            </h3>
+            </div>
+            <div className="subjects-list">
               {availableSubjects.map((subject) => (
-                <div key={subject.code} style={{ marginBottom: "10px" }}>
+                <div key={subject.code} className="subject-item">
                   <label>
                     <input
                       type="checkbox"
+                      className="subject-checkbox"
                       checked={selectedSubjects.some(s => s.code === subject.code)}
                       onChange={(e) => handleSubjectSelection(subject.code, e.target.checked)}
-                      style={{ marginRight: "10px" }}
                     />
                     {subject.code} - {subject.name}
                   </label>
                 </div>
               ))}
             </div>
-          </>
+          </div>
         ) : semester ? (
           <p>No subjects found for this semester.</p>
         ) : null}
 
         {selectedSubjects.length > 0 && (
-          <>
-            <h3>Exam Schedule for Selected Subjects ({selectedSubjects.length} selected)</h3>
-            <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
+          <div className="schedule-section">
+            <div className="section-titleCSS">
+                <h3 className="section-title">
+              Exam Schedule for Selected Subjects
+              <span className="selection-count">{selectedSubjects.length} selected</span>
+            </h3>
+            </div>
+
+            <table className="schedule-table">
               <thead>
-                <tr style={{ backgroundColor: "#f5f5f5" }}>
-                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>Subject Code</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>Subject Name</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>Date</th>
-                  <th style={{ border: "1px solid #ddd", padding: "8px" }}>Session</th>
+                <tr>
+                  <th>Subject Code</th>
+                  <th>Subject Name</th>
+                  <th>Date</th>
+                  <th>Session</th>
                 </tr>
               </thead>
               <tbody>
                 {selectedSubjects.map((subject) => (
                   <tr key={subject.code}>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>{subject.code}</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>{subject.name}</td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <td>{subject.code}</td>
+                    <td>{subject.name}</td>
+                    <td>
                       <select
                         value={subjectSessions[subject.code]?.date || ""}
                         onChange={(e) => handleSessionChange(subject.code, "date", e.target.value)}
@@ -262,7 +265,7 @@ function Dashboard() {
                         ))}
                       </select>
                     </td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <td>
                       <select
                         value={subjectSessions[subject.code]?.session || ""}
                         onChange={(e) => handleSessionChange(subject.code, "session", e.target.value)}
@@ -271,27 +274,19 @@ function Dashboard() {
                         <option value="">Select Session</option>
                         <option value="Morning">Morning (10:00 AM - 11:30 AM)</option>
                         <option value="Afternoon">Afternoon (2:00 PM - 3:30 PM)</option>
-  
                       </select>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </>
+          </div>
         )}
 
         <button
           type="submit"
+          className="submit-button"
           disabled={selectedSubjects.length === 0 || loading}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: selectedSubjects.length === 0 || loading ? "#ccc" : "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: selectedSubjects.length === 0 || loading ? "not-allowed" : "pointer"
-          }}
         >
           {loading ? "Submitting..." : `Submit ${selectedSubjects.length} Exam Session(s)`}
         </button>
