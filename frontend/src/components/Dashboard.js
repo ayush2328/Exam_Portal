@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiService } from "../services/api";  // ✅ CORRECT PATH
 
 function Dashboard() {
   const [semester, setSemester] = useState("");
@@ -10,6 +11,8 @@ function Dashboard() {
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [subjectSessions, setSubjectSessions] = useState({});
   const [availableDates, setAvailableDates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Generate years (current year and next 2 years)
   const years = Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i);
@@ -41,17 +44,26 @@ function Dashboard() {
     }
   }, [month, year]);
 
-  // Fetch subjects from backend when semester changes
+  // Fetch subjects from backend when semester changes - USING CORRECT API
   useEffect(() => {
     if (semester) {
-      fetch(`http://localhost:8080/exambackend/GetSubjectsServlet?sem=${semester}`)
-        .then(res => res.json())
+      setLoading(true);
+      setError("");
+
+      // USING API SERVICE INSTEAD OF DIRECT FETCH
+      apiService.getSubjects(semester)
         .then(data => {
           setAvailableSubjects(data);
           setSelectedSubjects([]);
           setSubjectSessions({});
+          setLoading(false);
         })
-        .catch(err => console.error('Error fetching subjects:', err));
+        .catch(err => {
+          console.error('Error fetching subjects:', err);
+          setError('Failed to load subjects. Please try again.');
+          setLoading(false);
+          setAvailableSubjects([]);
+        });
     } else {
       setAvailableSubjects([]);
       setSelectedSubjects([]);
@@ -98,7 +110,7 @@ function Dashboard() {
     }
 
     // Validate all subjects have date and session
-    const incompleteSubjects = selectedSubjects.filter(subject => 
+    const incompleteSubjects = selectedSubjects.filter(subject =>
       !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
     );
 
@@ -107,28 +119,23 @@ function Dashboard() {
       return;
     }
 
-    const payload = {
-      semester: parseInt(semester),
-      branch,
-      internalExam,
-      monthYear: `${months.find(m => m.value === month)?.name} ${year}`,
-      subjects: selectedSubjects.map(subject => ({
-        ...subject,
-        examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
-        session: subjectSessions[subject.code].session
-      }))
-    };
-
+    // For each selected subject, submit individually
     try {
-      const response = await fetch('http://localhost:8080/exambackend/AddExamSessionServlet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const submissionPromises = selectedSubjects.map(async (subject) => {
+        const examData = {
+          subjectCode: subject.code,
+          examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
+          examTime: subjectSessions[subject.code].session,
+          semester: parseInt(semester)
+        };
+
+        return await apiService.addExamSession(examData);
       });
 
-      const result = await response.json();
-      console.log("Exam Session submitted successfully:", result);
-      alert("Exam Session submitted successfully!");
+      // Wait for all submissions to complete
+      const results = await Promise.all(submissionPromises);
+      console.log("All exam sessions submitted successfully:", results);
+      alert(`Successfully submitted ${selectedSubjects.length} exam session(s)!`);
 
       // Reset form
       setSemester("");
@@ -147,6 +154,9 @@ function Dashboard() {
   return (
     <div style={{ padding: "20px", maxWidth: "1000px", margin: "20px auto" }}>
       <h2 style={{ textAlign: "center" }}>Welcome Admin 🎉</h2>
+
+      {error && <div style={{ color: "red", textAlign: "center", marginBottom: "15px" }}>{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: "15px", display: "flex", gap: "20px", flexWrap: "wrap" }}>
           <div>
@@ -198,9 +208,11 @@ function Dashboard() {
           </div>
         </div>
 
-        {availableSubjects.length > 0 && (
+        {loading ? (
+          <p>Loading subjects...</p>
+        ) : availableSubjects.length > 0 ? (
           <>
-            <h3>Select Subjects for Exam</h3>
+            <h3>Select Subjects for Exam ({availableSubjects.length} subjects available)</h3>
             <div style={{ marginBottom: "20px", maxHeight: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
               {availableSubjects.map((subject) => (
                 <div key={subject.code} style={{ marginBottom: "10px" }}>
@@ -217,11 +229,13 @@ function Dashboard() {
               ))}
             </div>
           </>
-        )}
+        ) : semester ? (
+          <p>No subjects found for this semester.</p>
+        ) : null}
 
         {selectedSubjects.length > 0 && (
           <>
-            <h3>Exam Schedule for Selected Subjects</h3>
+            <h3>Exam Schedule for Selected Subjects ({selectedSubjects.length} selected)</h3>
             <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
               <thead>
                 <tr style={{ backgroundColor: "#f5f5f5" }}>
@@ -232,7 +246,7 @@ function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {selectedSubjects.map((subject, index) => (
+                {selectedSubjects.map((subject) => (
                   <tr key={subject.code}>
                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>{subject.code}</td>
                     <td style={{ border: "1px solid #ddd", padding: "8px" }}>{subject.name}</td>
@@ -255,9 +269,9 @@ function Dashboard() {
                         required
                       >
                         <option value="">Select Session</option>
-                        <option value="Morning">Morning (9:00 AM - 12:00 PM)</option>
-                        <option value="Afternoon">Afternoon (1:00 PM - 4:00 PM)</option>
-                        <option value="Evening">Evening (5:00 PM - 8:00 PM)</option>
+                        <option value="Morning">Morning (10:00 AM - 11:30 AM)</option>
+                        <option value="Afternoon">Afternoon (2:00 PM - 3:30 PM)</option>
+  
                       </select>
                     </td>
                   </tr>
@@ -267,19 +281,19 @@ function Dashboard() {
           </>
         )}
 
-        <button 
-          type="submit" 
-          disabled={selectedSubjects.length === 0}
+        <button
+          type="submit"
+          disabled={selectedSubjects.length === 0 || loading}
           style={{
             padding: "10px 20px",
-            backgroundColor: selectedSubjects.length === 0 ? "#ccc" : "#007bff",
+            backgroundColor: selectedSubjects.length === 0 || loading ? "#ccc" : "#007bff",
             color: "white",
             border: "none",
             borderRadius: "4px",
-            cursor: selectedSubjects.length === 0 ? "not-allowed" : "pointer"
+            cursor: selectedSubjects.length === 0 || loading ? "not-allowed" : "pointer"
           }}
         >
-          Submit Exam Session
+          {loading ? "Submitting..." : `Submit ${selectedSubjects.length} Exam Session(s)`}
         </button>
       </form>
     </div>
