@@ -20,11 +20,11 @@ function Dashboard() {
 
   // Months list
   const months = [
-    { value: "01", name: "January" }, { value: "02", name: "February" }, 
-    { value: "03", name: "March" }, { value: "04", name: "April" }, 
-    { value: "05", name: "May" }, { value: "06", name: "June" }, 
-    { value: "07", name: "July" }, { value: "08", name: "August" }, 
-    { value: "09", name: "September" }, { value: "10", name: "October" }, 
+    { value: "01", name: "January" }, { value: "02", name: "February" },
+    { value: "03", name: "March" }, { value: "04", name: "April" },
+    { value: "05", name: "May" }, { value: "06", name: "June" },
+    { value: "07", name: "July" }, { value: "08", name: "August" },
+    { value: "09", name: "September" }, { value: "10", name: "October" },
     { value: "11", name: "November" }, { value: "12", name: "December" }
   ];
 
@@ -158,6 +158,10 @@ function Dashboard() {
               <option value="2">2nd</option>
               <option value="3">3rd</option>
               <option value="4">4th</option>
+              <option value="5">5th</option>
+              <option value="6">6th</option>
+              <option value="7">7th</option>
+              <option value="8">8th</option>
             </select>
           </div>
 
@@ -204,11 +208,11 @@ function Dashboard() {
         ) : availableSubjects.length > 0 ? (
           <div className="subjects-section">
 
-           <div className="heading_SubjectSection">
-                 <h3 className="section-title">
-                  Select Subjects for Exam
-              <span className="selection-count">{availableSubjects.length} subjects</span>
-            </h3>
+            <div className="heading_SubjectSection">
+              <h3 className="section-title">
+                Select Subjects for Exam
+                <span className="selection-count">{availableSubjects.length} subjects</span>
+              </h3>
             </div>
             <div className="subjects-list">
               {availableSubjects.map((subject) => (
@@ -233,10 +237,10 @@ function Dashboard() {
         {selectedSubjects.length > 0 && (
           <div className="schedule-section">
             <div className="section-titleCSS">
-                <h3 className="section-title">
-              Exam Schedule for Selected Subjects
-              <span className="selection-count">{selectedSubjects.length} selected</span>
-            </h3>
+              <h3 className="section-title">
+                Exam Schedule for Selected Subjects
+                <span className="selection-count">{selectedSubjects.length} selected</span>
+              </h3>
             </div>
 
             <table className="schedule-table">
