@@ -1,11 +1,11 @@
 // API service functions
-const API_BASE = 'http://localhost:8080/ExamBackend';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://exam-backend.onrender.com';
 
 export const apiService = {
   // Get subjects for a semester
   getSubjects: async (semester) => {
     try {
-      const response = await fetch(`${API_BASE}/getSubjects?sem=${semester}`);
+      const response = await fetch(`${API_BASE_URL}/getSubjects?sem=${semester}`); // FIXED: API_BASE_URL
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -26,14 +26,14 @@ export const apiService = {
       formData.append('examTime', examData.examTime);
       formData.append('semester', examData.semester);
 
-      const response = await fetch(`${API_BASE}/addExamSession`, {
+      const response = await fetch(`${API_BASE_URL}/addExamSession`, { // FIXED: API_BASE_URL
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: formData
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
