@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { apiService } from "../services/api";
-import "./Dashboard.css";  // ✅ YEH LINE ADD KARO
+import "./Dashboard.css";  
 
 function Dashboard() {
   const [semester, setSemester] = useState("");
