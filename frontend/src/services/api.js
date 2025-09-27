@@ -1,11 +1,21 @@
-// API service functions
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://exam-backend.onrender.com';
+// API service functions - Support both local and production
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+
+// Helper to build correct URLs for different environments
+const buildApiUrl = (endpoint) => {
+  // If using Render (contains 'render.com'), use the Render URL directly
+  if (API_BASE_URL.includes('render.com')) {
+    return `${API_BASE_URL}${endpoint}`;
+  }
+  // Local development - use /ExamBackend context
+  return `${API_BASE_URL}/ExamBackend${endpoint}`;
+};
 
 export const apiService = {
   // Get subjects for a semester
   getSubjects: async (semester) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/getSubjects?sem=${semester}`); // FIXED: API_BASE_URL
+      const response = await fetch(buildApiUrl(`/getSubjects?sem=${semester}`));
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -19,14 +29,13 @@ export const apiService = {
   // Add exam session
   addExamSession: async (examData) => {
     try {
-      // Convert to URL-encoded format as your servlet expects
       const formData = new URLSearchParams();
       formData.append('subjectCode', examData.subjectCode);
       formData.append('examDate', examData.examDate);
       formData.append('examTime', examData.examTime);
       formData.append('semester', examData.semester);
 
-      const response = await fetch(`${API_BASE_URL}/addExamSession`, { // FIXED: API_BASE_URL
+      const response = await fetch(buildApiUrl('/addExamSession'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
