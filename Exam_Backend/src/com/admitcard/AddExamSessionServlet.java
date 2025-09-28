@@ -4,7 +4,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.*;
-import java.sql.*;
 import org.json.JSONObject;
 
 @WebServlet("/addExamSession")
@@ -14,8 +13,8 @@ public class AddExamSessionServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // CORS headers
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        // CORS headers - Production ke liye * use karo
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -36,23 +35,14 @@ public class AddExamSessionServlet extends HttpServlet {
                 return;
             }
 
-            // Insert into database
-            try (Connection conn = DBhelper.getConnection()) {
-                String sql = "INSERT INTO ExamSessions (subject_code, exam_date, exam_time, semester) VALUES (?, ?, ?, ?)";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, subjectCode);
-                ps.setString(2, examDate);
-                ps.setString(3, examTime);
-                ps.setInt(4, Integer.parseInt(semester));
+            // MongoDB mein insert karo
+            boolean success = DBhelper.addExamSession(subjectCode, examDate, examTime, Integer.parseInt(semester));
 
-                int rowsAffected = ps.executeUpdate();
-
-                if (rowsAffected > 0) {
-                    out.print("{\"success\":\"Exam session added successfully\"}");
-                } else {
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                    out.print("{\"error\":\"Failed to add exam session\"}");
-                }
+            if (success) {
+                out.print("{\"success\":\"Exam session added successfully\"}");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                out.print("{\"error\":\"Failed to add exam session\"}");
             }
 
         } catch (Exception e) {
@@ -66,7 +56,7 @@ public class AddExamSessionServlet extends HttpServlet {
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Preflight CORS support
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(HttpServletResponse.SC_OK);

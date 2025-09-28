@@ -4,19 +4,18 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.*;
-import java.sql.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @WebServlet("/getSubjects")
 public class GetSubjectsServlet extends HttpServlet {
     
- @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // CORS headers
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        // CORS headers - Production ke liye * use karo
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -37,17 +36,16 @@ public class GetSubjectsServlet extends HttpServlet {
             return;
         }
 
-        try (Connection conn = DBhelper.getConnection()) {
-            String sql = "SELECT subject_code, subject_name FROM SubjectSchedule WHERE sem=?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, sem);
-            System.out.println("[DEBUG] Executing SQL: " + ps);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
+        try {
+            // MongoDB se subjects get karo
+            JSONArray subjects = DBhelper.getSubjects(sem);
+            
+            // Format change karo frontend compatibility ke liye
+            for (int i = 0; i < subjects.length(); i++) {
+                JSONObject subject = subjects.getJSONObject(i);
                 JSONObject obj = new JSONObject();
-                obj.put("code", rs.getString("subject_code"));
-                obj.put("name", rs.getString("subject_name"));
+                obj.put("code", subject.getString("subject_code"));
+                obj.put("name", subject.getString("subject_name"));
                 jsonArray.put(obj);
             }
 
@@ -57,7 +55,7 @@ public class GetSubjectsServlet extends HttpServlet {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             PrintWriter out = response.getWriter();
-            out.print("{\"error\":\"Database error\"}");
+            out.print("{\"error\":\"Database error: " + e.getMessage() + "\"}");
             return;
         }
 
@@ -69,7 +67,7 @@ public class GetSubjectsServlet extends HttpServlet {
     protected void doOptions(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Preflight CORS support
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type");
         response.setStatus(HttpServletResponse.SC_OK);
