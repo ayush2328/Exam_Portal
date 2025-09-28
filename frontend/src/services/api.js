@@ -12,7 +12,6 @@ const buildApiUrl = (endpoint) => {
 };
 
 export const apiService = {
-  // Get subjects for a semester
   getSubjects: async (semester) => {
     try {
       const response = await fetch(buildApiUrl(`/getSubjects?sem=${semester}`));
@@ -26,7 +25,6 @@ export const apiService = {
     }
   },
 
-  // Add exam session
   addExamSession: async (examData) => {
     try {
       const formData = new URLSearchParams();
