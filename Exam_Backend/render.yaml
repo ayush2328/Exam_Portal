@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: exam-portal-backend
+    runtime: docker
+    dockerfilePath: Exam_Backend/Dockerfile
+    plan: free
+    envVars:
+      - key: JAVA_OPTS
+        value: -Xmx512m

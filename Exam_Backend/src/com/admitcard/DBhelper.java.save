@@ -1,0 +1,23 @@
+p        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL Driver not found", e);
+        }ackage com.admitcard;
+import java.sql.*;
+
+public class DBhelper {
+    private static final String URL = "jdbc:mysql://localhost:3306/college_db";
+    private static final String USER = "root";
+    private static final String PASS = "Ayush@232829";
+
+    public static Connection getConnection() throws SQLException {
+        try {
+            // Add this line to register MySQL driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL Driver not found", e);
+        }
+        
+        return DriverManager.getConnection(URL, USER, PASS);
+    }
+}
