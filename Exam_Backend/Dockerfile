@@ -1,5 +1,8 @@
 FROM tomcat:9.0-jre17
 
+# Install unzip first
+RUN apt-get update && apt-get install -y unzip
+
 # Remove default apps
 RUN rm -rf /usr/local/tomcat/webapps/ROOT*
 
