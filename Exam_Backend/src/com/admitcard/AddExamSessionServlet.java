@@ -4,7 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.WebServlet;
 import java.io.*;
-import org.json.JSONObject;
+// import org.json.JSONObject;
 
 @WebServlet("/addExamSession")
 public class AddExamSessionServlet extends HttpServlet {

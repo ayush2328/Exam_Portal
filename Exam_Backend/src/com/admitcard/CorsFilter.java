@@ -10,8 +10,7 @@ public class CorsFilter implements Filter {
 
     // Allowed origins - update the vercel domain below to match your actual Vercel domain
     private static final List<String> ALLOWED_ORIGINS = Arrays.asList(
-        "http://localhost:3000",                         // local dev react
-        "https://dynamicadmitcard.vercel.app/"        // replace with your actual Vercel URL if different
+        "https://dynamicadmitcard.vercel.app/"       
     );
 
     @Override
