@@ -1,0 +1,74 @@
+subject_id	subject_name	subject_code	sem
+25	FRENCH	21LEH103T	1
+26	CALCULUS AND LINEAR ALGEBRA	21MAB101T	1
+27	INTRODUCTION TO COMPUTATIONAL BIOLOGY	21BTB102T	1
+28	PROGRAMMING FOR PROBLEM SOLVING	21CSS101J	1
+29	CHEMISTRY	21CYB101J	1
+30	PHILOSOPHY OF ENGINEERING	21GNH101J	1
+31	PHYSICAL AND MENTAL HEALTH USING YOGA	21GNM101L	1
+32	PROFESSIONAL SKILLS AND PRACTICES	21PDM101L	1
+33	ENGINEERING GRAPHICS AND DESIGN	21MES102L	1
+34	COMMUNICATIVE ENGLISH	21LEH101T	2
+35	ADVANCED CALCULUS AND COMPLEX ANALYSIS	21MAB102T	2
+36	OBJECT ORIENTED DESIGN AND PROGRAMMING	21CSC101T	2
+37	ELECTRICAL AND ELECTRONICS ENGINEERING	21EES101T	2
+38	SEMICONDUCTOR PHYSICS AND COMPUTATIONAL METHODS	21PYB102J	2
+39	ENVIRONMENTAL SCIENCE	21CYM101T	2
+40	CONSTITUTION OF INDIA	21LEM101T	2
+41	BASIC CIVIL AND MECHANICAL WORKSHOP	21MES101L	2
+42	NUMERICAL METHODS AND ANALYSIS	21MAB206T	3
+43	DATA STRUCTURES AND ALGORITHMS	21CSC201J	3
+44	OPERATING SYSTEMS	21CSC202J	3
+45	ADVANCED PROGRAMMING PRACTICE	21CSC203P	3
+46	COMPUTER ORGANIZATION AND ARCHITECTURE	21CSS201T	3
+47	DESIGN THINKING AND METHODOLOGY	21DCS201P	3
+48	PROFESSIONAL ETHICS	21LEM201T	3
+49	Design and Analysis of Algorithms	TBCSC204	4
+50	Database Management Systems	TBCSC307	4
+51	Artificial Intelligence	TBCSC301	4
+52	Probability and Queueing Theory	18MAB201T	4
+53	Social Engineering	18PDH103T	4
+54	Bioprocess Engineering	18BFB202T	4
+55	Cell Communication and Signaling	18BCE202T	4
+56	Software Engineering and Project Management	TBCSC304	4
+57	Chemical Engineering Principles	18BCH201T	4
+58	Molecular Biology	18BMB201T	4
+59	Internet of Things (IoT)	TBCSC457	4
+60	Discrete Mathematics for Engineers	18MAB302T	5
+61	Formal Languages and Automata	TBCSC307	5
+62	Computer Networks	TBCSC203	5
+63	Machine Learning	TBCSC302	5
+64	Professional Elective - II (Digital Image Processing)	TBCSE337	5
+65	Professional Elective - II (Network Security)	TBCSE347	5
+66	Professional Elective - II (Cloud Computing)	TBCSE325	5
+67	Professional Elective - II (Data Mining and Warehousing)	TBCSE312	5
+68	Professional Elective - II (Compiler Design)	TBCSE326	5
+69	Open Elective - I (IT Infrastructure Management)	TBCSO107T	5
+70	Open Elective - I (Mobile Application Development)	TBCSO203T	5
+71	Open Elective - I (Cyber Laws and Ethics)	TBCSO214T	5
+72	Open Elective - I (E-Commerce Systems)	TBCSO221T	5
+73	Open Elective - I (Green Computing)	TBCSO301T	5
+74	Behavioral Psychology	XXXXXXX	7
+75	Professional Elective - V	PE5_CODE	7
+76	Professional Elective - VI	PE6_CODE	7
+77	Professional Elective - VII	PE7_CODE	7
+78	Professional Elective - VIII	PE8_CODE	7
+79	Open Elective - III	OE3_CODE	7
+80	Software Engineering and Project Management	TBCSC304	6
+81	Compiler Design	TBCSC305	6
+82	Data Science	TBCSC306	6
+83	Project & MOOC	18PDMO22L	6
+84	Professional Elective - III (Network Security)	TBCSE347	6
+85	Professional Elective - III (Data Mining)	TBCSE357	6
+86	Professional Elective - III (Artificial Neural Networks)	TBCSE366	6
+87	Professional Elective - III (Web Technologies)	TBCSE368	6
+88	Professional Elective - IV (Wireless Sensor Networks)	TBCSE437	6
+89	Professional Elective - IV (Big Data Analytics)	TBCSE442	6
+90	Professional Elective - IV (Cloud Security)	TBCSE445	6
+91	Professional Elective - IV (Blockchain Technology)	TBCSE446	6
+92	Open Elective - II (Mobile Application Development)	TBCSO203T	6
+93	Open Elective - II (Internet and Web Programming)	TBCSO215T	6
+94	Open Elective - II (Human–Computer Interaction)	TBCSO229T	6
+95	Open Elective - II (Business Intelligence Systems)	TBCSO232T	6
+96	Project	18CSP109L	8
+97	Internship	18CSP108L	8

@@ -1,0 +1,141 @@
+student_name,reg_no,course,branch,year,sem,pic,dob,contact_no,email_id
+Keshav chauhan,RA2411030030001,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_01.png,NULL,8439226659,kc8478@srmist.edu.in
+Raj Aryan,RA2411030030002,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_02.png,NULL,6202562990,ra3181@srmist.edu.in
+Sushant Bhardwaj,RA2411030030003,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_03.png,NULL,9667746499,sb3828@srmist.edu.in
+Krishna,RA2411030030005,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_05.png,NULL,9319097195,Kc1468@srmist.edu.in
+Tanmay Rajput,RA2411030030006,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_06.png,NULL,8090080677,tr5057@srmist.edu.in
+Khushi Pandey,RA2411030030007,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_07.png,NULL,8709478787,kp6979@srmist.edu.in
+Aarohan Shyam,RA2411030030008,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_08.png,NULL,9899224450,as5334@srmist.edu.in
+SHAURYA JEET SINGH,RA2411030030009,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_09.png,NULL,7289808887,ss2823@srmist.edu.in
+Bhoomika Singh,RA2411030030010,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_10.png,NULL,7807717994,bs3950@srmist.edu.in
+Krishiv Bhardwaj,RA2411030030011,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_11.png,NULL,7042214331,kb8427@srmist.edu.in
+Devesh Malik,RA2411030030012,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_12.png,NULL,9212456788,dm8410@srmist.edu.in
+Snigdha Srivastava,RA2411030030013,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_13.png,NULL,9643880640,ss7405@srmist.edu.in
+Siddharth Chauhan,RA2411030030014,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_14.png,NULL,7303708989,sc7662@srmist.edu.in
+Prabhuji mishra,RA2411030030016,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_16.png,NULL,8090026638,Pm8067@srmist.edu.in
+Ajay Pratap Singh,RA2411030030017,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_17.png,NULL,7987162451,as0089@srmist.edu.in
+Antara Pandey,RA2411030030019,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_19.png,NULL,6203499795,ap9678@srmist.edu.in
+Chitransh Srivastava,RA2411030030020,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_20.png,NULL,8449134475,cs8489@srmist.edu.in
+Pranjay singh mehra,RA2411030030021,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_21.png,NULL,7017205750,pranjaymehra@gmail.com
+Ayoniza,RA2411030030022,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_22.png,NULL,9264973880,at5354@srm.edu.in
+Kratik junwal,RA2411030030023,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_23.png,NULL,9549903050,Kj6937@srmist.edu.in
+Arnav Singh,RA2411030030024,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_24.png,NULL,9718822089,As7052@srmist.edu.in
+Kritarth Gupta,RA2411030030025,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_25.png,NULL,8840333934,kg9308@srmist.edu.in
+Vipansh Vimal,RA2411030030026,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_26.png,NULL,9625220764,vv6591@srmist.edu.in
+Piyush bhardwaj,RA2411030030028,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_28.png,NULL,9389014827,pb2174@srmist.edu.in
+Nishkarsh Sharma,RA2411030030029,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_29.png,NULL,9811977805,ns1427@srmist.edu.in
+Rajat Rai,RA2411030030030,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_30.png,NULL,8171790722,rr3110@srmist.edu.in
+Shreya Singh,RA2411030030031,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_31.png,NULL,9555318279,ss1755srmist@edu.in
+Shagun sharma,RA2411030030032,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_32.png,NULL,9528319730,ss5962@srmist.edu.in
+Praveen Raj Singh,RA2411030030033,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_33.png,NULL,8218471682,pr5545@srmist.edu.in
+Ayush Gupta,RA2411030030034,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_34.png,23/10/2004,9424333194,ag5159@srmist.edu.in
+PRANJAL KHETWAL,RA2411030030035,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_35.png,NULL,962769090,pk0365@srmist.edu.in
+Abhinav Sharma,RA2411030030036,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_36.png,NULL,9870742812,as0850@srmist.edu.in
+Sahil kumar,RA2411030030037,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_37.png,NULL,7004354025,sk1690@srmist.edu.in
+pranjal aggarwal,RA2411030030039,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_39.png,NULL,9871965525,pa4603@srmist.edu.in
+Bibekpreet Singh Chugh,RA2411030030040,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_40.png,NULL,9027844360,bc4507@srmist.edu.in
+Nitin sharma,RA2411030030041,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_41.png,NULL,7051435257,ns5986@srmist.edu.in
+Roopesh Singhal,RA2411030030042,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_42.png,NULL,9717884472,rs6491@srmist.edu.in
+Nikunj Miglani,RA2411030030043,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_43.png,NULL,9519517579,Nm3041@srmist.edu.in
+ADITYA AGRAHARY,RA2411030030044,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_44.png,NULL,7549666444,aa4315@srmist.edu.in
+Gauri Shamea,RA2411030030045,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_45.png,NULL,7355661562,gs8951@srmist.edu.in
+Shivam Bhardwaj,RA2411030030046,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_46.png,NULL,9026507058,sb0848@srmist.edu.in
+Sarthak Srivastava,RA2411030030047,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_47.png,NULL,8429130979,ss0246@srmist.edu.in
+Arpita singh baghel,RA2411030030048,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_48.png,28/03/2006,9266532823,ab1470@srmist.edu.in
+Vishv singh,RA2411030030049,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_49.png,NULL,9354242152,vs8422@srmist.edu.in
+Srishti vasistha,RA2411030030050,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_50.png,NULL,8057948741,Sristhivashistha@gmail.com
+Aditya Mukherji,RA2411030030052,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_52.png,NULL,9235558123,am4360@srmist.edu.in
+Mahi Sirohi,RA2411030030053,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_53.png,NULL,9311159911,ms5364@srmist.edu.in
+Ujjawal Sharma,RA2411030030054,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_54.png,NULL,9667021268,us7476@srmist.edu.in
+Aadi Jain,RA2411030030055,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_55.png,NULL,9458897318,aj1463@srmist.edu.in
+Nandini sharma,RA2411030030056,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_56.png,NULL,8755151271,ns5392@srmist.edu.in
+Gagandeep Singh Rathore,RA2411030030057,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_57.png,NULL,9460495969,gr5873@srmist.edu.in
+Vishal kumar,RA2411030030058,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_58.png,NULL,6203199568,Vk6649@srmist.edu.in
+Utkarsh Kumar Srivastava,RA2411030030059,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_59.png,NULL,8840884851,us7813@srmist.edu.in
+Shikha Sharma,RA2411030030060,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_60.png,NULL,8115988206,ss5462@srmist.edu.in
+Toib Fayaz,RA2411030030061,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_61.png,NULL,8491939111,tf8442@srmist.edu.in
+Vibhanshu Mittal,RA2411030030062,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_62.png,NULL,7303622690,vm1664@srmist.edu.in
+Santosh,RA2411030030063,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_63.png,NULL,9555181438,sz5620@srmist.edu.in
+Daksh Bansal,RA2411030030064,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_64.png,NULL,7599568200,db9444@srmist.edu.in
+Asmit Nayan,RA2411030030065,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_65.png,NULL,7870616187,an8562@srmist.edu.in
+Divy Kumar,RA2411030030066,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_66.png,NULL,7428041339,dk8036@srmist.edu.in
+PRANAY MAURYA,RA2411030030067,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_67.png,NULL,9971795785,pm6134@srmist.edu.in
+Kanhaiya kumar,RA2411030030068,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_68.png,NULL,9341201367,kk5542@srmist.edu.in
+Anika Bisht,RA2411030030069,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_69.png,NULL,9810118047,ab0021@srmist.edu.in
+PALAK BEHUNE,RA2411030030070,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_70.png,NULL,9926213333,pb5943@srmist.edu.in
+Abhishek Bhardwaj,RA2411030030071,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_71.png,NULL,9354604816,ab2651@srmist.edu.in
+ANKESH AHIR,RA2411030030072,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_72.png,NULL,8961498299,aa4959@srmist.edu.in
+Chetan malik,RA2411030030073,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_73.png,NULL,9354497189,cm1456@srmist.edu.in
+Sudhanshu singh chauhan,RA2411030030074,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_74.png,NULL,7017100402,sc9061@srmist.edu.in
+Kshitiz Gupta,RA2411030030075,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_75.png,NULL,9412248024,kg9854@srmist.edu.in
+Sidharth Sagar,RA2411030030076,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_76.png,NULL,8084364549,ss0725@srmist.edu.in
+Keshav chauhan,RA2411030030001,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_01.png,NULL,8439226659,kc8478@srmist.edu.in
+Raj Aryan,RA2411030030002,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_02.png,NULL,6202562990,ra3181@srmist.edu.in
+Sushant Bhardwaj,RA2411030030003,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_03.png,NULL,9667746499,sb3828@srmist.edu.in
+Krishna,RA2411030030005,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_05.png,NULL,9319097195,Kc1468@srmist.edu.in
+Tanmay Rajput,RA2411030030006,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_06.png,NULL,8090080677,tr5057@srmist.edu.in
+Khushi Pandey,RA2411030030007,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_07.png,NULL,8709478787,kp6979@srmist.edu.in
+Aarohan Shyam,RA2411030030008,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_08.png,NULL,9899224450,as5334@srmist.edu.in
+SHAURYA JEET SINGH,RA2411030030009,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_09.png,NULL,7289808887,ss2823@srmist.edu.in
+Bhoomika Singh,RA2411030030010,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_10.png,NULL,7807717994,bs3950@srmist.edu.in
+Krishiv Bhardwaj,RA2411030030011,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_11.png,NULL,7042214331,kb8427@srmist.edu.in
+Devesh Malik,RA2411030030012,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_12.png,NULL,9212456788,dm8410@srmist.edu.in
+Snigdha Srivastava,RA2411030030013,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_13.png,NULL,9643880640,ss7405@srmist.edu.in
+Siddharth Chauhan,RA2411030030014,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_14.png,NULL,7303708989,sc7662@srmist.edu.in
+Prabhuji mishra,RA2411030030016,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_16.png,NULL,8090026638,Pm8067@srmist.edu.in
+Ajay Pratap Singh,RA2411030030017,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_17.png,NULL,7987162451,as0089@srmist.edu.in
+Antara Pandey,RA2411030030019,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_19.png,NULL,6203499795,ap9678@srmist.edu.in
+Chitransh Srivastava,RA2411030030020,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_20.png,NULL,8449134475,cs8489@srmist.edu.in
+Pranjay singh mehra,RA2411030030021,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_21.png,NULL,7017205750,pranjaymehra@gmail.com
+Ayoniza,RA2411030030022,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_22.png,NULL,9264973880,at5354@srm.edu.in
+Kratik junwal,RA2411030030023,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_23.png,NULL,9549903050,Kj6937@srmist.edu.in
+Arnav Singh,RA2411030030024,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_24.png,NULL,9718822089,As7052@srmist.edu.in
+Kritarth Gupta,RA2411030030025,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_25.png,NULL,8840333934,kg9308@srmist.edu.in
+Vipansh Vimal,RA2411030030026,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_26.png,NULL,9625220764,vv6591@srmist.edu.in
+Piyush bhardwaj,RA2411030030028,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_28.png,NULL,9389014827,pb2174@srmist.edu.in
+Nishkarsh Sharma,RA2411030030029,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_29.png,NULL,9811977805,ns1427@srmist.edu.in
+Rajat Rai,RA2411030030030,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_30.png,NULL,8171790722,rr3110@srmist.edu.in
+Shreya Singh,RA2411030030031,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_31.png,NULL,9555318279,ss1755srmist@edu.in
+Shagun sharma,RA2411030030032,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_32.png,NULL,9528319730,ss5962@srmist.edu.in
+Praveen Raj Singh,RA2411030030033,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_33.png,NULL,8218471682,pr5545@srmist.edu.in
+Ayush Gupta,RA2411030030034,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_34.png,23/10/2004,9424333194,ag5159@srmist.edu.in
+PRANJAL KHETWAL,RA2411030030035,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_35.png,NULL,962769090,pk0365@srmist.edu.in
+Abhinav Sharma,RA2411030030036,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_36.png,NULL,9870742812,as0850@srmist.edu.in
+Sahil kumar,RA2411030030037,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_37.png,NULL,7004354025,sk1690@srmist.edu.in
+pranjal aggarwal,RA2411030030039,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_39.png,NULL,9871965525,pa4603@srmist.edu.in
+Bibekpreet Singh Chugh,RA2411030030040,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_40.png,NULL,9027844360,bc4507@srmist.edu.in
+Nitin sharma,RA2411030030041,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_41.png,NULL,7051435257,ns5986@srmist.edu.in
+Roopesh Singhal,RA2411030030042,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_42.png,NULL,9717884472,rs6491@srmist.edu.in
+Nikunj Miglani,RA2411030030043,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_43.png,NULL,9519517579,Nm3041@srmist.edu.in
+ADITYA AGRAHARY,RA2411030030044,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_44.png,NULL,7549666444,aa4315@srmist.edu.in
+Gauri Shamea,RA2411030030045,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_45.png,NULL,7355661562,gs8951@srmist.edu.in
+Shivam Bhardwaj,RA2411030030046,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_46.png,NULL,9026507058,sb0848@srmist.edu.in
+Sarthak Srivastava,RA2411030030047,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_47.png,NULL,8429130979,ss0246@srmist.edu.in
+Arpita singh baghel,RA2411030030048,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_48.png,28/03/2006,9266532823,ab1470@srmist.edu.in
+Vishv singh,RA2411030030049,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_49.png,NULL,9354242152,vs8422@srmist.edu.in
+Srishti vasistha,RA2411030030050,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_50.png,NULL,8057948741,Sristhivashistha@gmail.com
+Aditya Mukherji,RA2411030030052,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_52.png,NULL,9235558123,am4360@srmist.edu.in
+Mahi Sirohi,RA2411030030053,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_53.png,NULL,9311159911,ms5364@srmist.edu.in
+Ujjawal Sharma,RA2411030030054,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_54.png,NULL,9667021268,us7476@srmist.edu.in
+Aadi Jain,RA2411030030055,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_55.png,NULL,9458897318,aj1463@srmist.edu.in
+Nandini sharma,RA2411030030056,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_56.png,NULL,8755151271,ns5392@srmist.edu.in
+Gagandeep Singh Rathore,RA2411030030057,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_57.png,NULL,9460495969,gr5873@srmist.edu.in
+Vishal kumar,RA2411030030058,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_58.png,NULL,6203199568,Vk6649@srmist.edu.in
+Utkarsh Kumar Srivastava,RA2411030030059,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_59.png,NULL,8840884851,us7813@srmist.edu.in
+Shikha Sharma,RA2411030030060,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_60.png,NULL,8115988206,ss5462@srmist.edu.in
+Toib Fayaz,RA2411030030061,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_61.png,NULL,8491939111,tf8442@srmist.edu.in
+Vibhanshu Mittal,RA2411030030062,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_62.png,NULL,7303622690,vm1664@srmist.edu.in
+Santosh,RA2411030030063,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_63.png,NULL,9555181438,sz5620@srmist.edu.in
+Daksh Bansal,RA2411030030064,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_64.png,NULL,7599568200,db9444@srmist.edu.in
+Asmit Nayan,RA2411030030065,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_65.png,NULL,7870616187,an8562@srmist.edu.in
+Divy Kumar,RA2411030030066,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_66.png,NULL,7428041339,dk8036@srmist.edu.in
+PRANAY MAURYA,RA2411030030067,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_67.png,NULL,9971795785,pm6134@srmist.edu.in
+Kanhaiya kumar,RA2411030030068,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_68.png,NULL,9341201367,kk5542@srmist.edu.in
+Anika Bisht,RA2411030030069,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_69.png,NULL,9810118047,ab0021@srmist.edu.in
+PALAK BEHUNE,RA2411030030070,B.Tech,CSE - CS,2nd Year,3rd Semester,webapp/images/pic_70.png,NULL,9926213333,pb5943@srmist.edu.in
+Abhishek Bhardwaj,RA2411030030071,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_71.png,NULL,9354604816,ab2651@srmist.edu.in
+ANKESH AHIR,RA2411030030072,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_72.png,NULL,8961498299,aa4959@srmist.edu.in
+Chetan malik,RA2411030030073,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_73.png,NULL,9354497189,cm1456@srmist.edu.in
+Sudhanshu singh chauhan,RA2411030030074,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_74.png,NULL,7017100402,sc9061@srmist.edu.in
+Kshitiz Gupta,RA2411030030075,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_75.png,NULL,9412248024,kg9854@srmist.edu.in
+Sidharth Sagar,RA2411030030076,B.Tech,CSE - CS,2nd Year,3rd Semester,pic_76.png,NULL,8084364549,ss0725@srmist.edu.in

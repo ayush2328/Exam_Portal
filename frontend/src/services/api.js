@@ -1,15 +1,8 @@
 // API service functions - Support both local and production
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://exam-portal-backend-rmov.onrender.com';
 
-// Helper to build correct URLs for different environments
-const buildApiUrl = (endpoint) => {
-  // If using Render (contains 'render.com'), use the Render URL directly
-  if (API_BASE_URL.includes('render.com')) {
-    return `${API_BASE_URL}${endpoint}`;
-  }
-  // Local development - use /ExamBackend context
-  return `${API_BASE_URL}/ExamBackend${endpoint}`;
-};
+// Just append endpoint - your servlets are mapped directly in web.xml to /getSubjects etc.
+const buildApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`;
 
 export const apiService = {
   getSubjects: async (semester) => {
