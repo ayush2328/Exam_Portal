@@ -1,6 +1,0 @@
-com/admitcard/Main.class
-com/admitcard/AdmitCardGenerator.class
-com/admitcard/AddExamSessionServlet.class
-com/admitcard/CorsFilter.class
-com/admitcard/GetSubjectsServlet.class
-com/admitcard/DBhelper.class

@@ -1,45 +1,77 @@
-// API service functions - Support both local and production
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://exam-portal-backend-rmov.onrender.com';
+// Updated api.js with data transformation
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-// Just append endpoint - your servlets are mapped directly in web.xml to /getSubjects etc.
-const buildApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`;
+console.log('🔧 API Configuration:');
+console.log('API_BASE_URL:', API_BASE_URL);
 
 export const apiService = {
   getSubjects: async (semester) => {
     try {
-      const response = await fetch(buildApiUrl(`/getSubjects?sem=${semester}`));
+      const url = `${API_BASE_URL}/subjects/?sem=${semester}`;
+      console.log('📞 Calling getSubjects:', url);
+      
+      const response = await fetch(url);
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return await response.json();
+      
+      const data = await response.json();
+      console.log('✅ Raw API Response:', data);
+      
+      // Transform data to match frontend expectations
+      const transformedSubjects = data.subjects ? data.subjects.map(subject => ({
+        code: subject.subject_code,    // Map subject_code → code
+        name: subject.subject_name,    // Map subject_name → name
+        semester: subject.sem,         // Map sem → semester
+        id: subject._id || subject.id  // Keep ID for reference
+      })) : [];
+      
+      console.log('🔄 Transformed subjects:', transformedSubjects);
+      return transformedSubjects;
     } catch (error) {
-      console.error('Error fetching subjects:', error);
+      console.error('❌ Error in getSubjects:', error);
+      throw error;
+    }
+  },
+
+  // Health check to verify connection
+  healthCheck: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/health/`);
+      const data = await response.json();
+      console.log('🏥 Backend Health:', data);
+      return data;
+    } catch (error) {
+      console.error('❌ Health check failed:', error);
       throw error;
     }
   },
 
   addExamSession: async (examData) => {
     try {
-      const formData = new URLSearchParams();
-      formData.append('subjectCode', examData.subjectCode);
-      formData.append('examDate', examData.examDate);
-      formData.append('examTime', examData.examTime);
-      formData.append('semester', examData.semester);
-
-      const response = await fetch(buildApiUrl('/addExamSession'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData
+      const params = new URLSearchParams({
+        subject_code: examData.subjectCode,
+        exam_date: examData.examDate,
+        exam_time: examData.examTime,
+        sem: examData.semester.toString()
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return await response.json();
+      
+      const url = `${API_BASE_URL}/exam-sessions/?${params}`;
+      console.log('📤 Adding exam session:', url);
+      
+      const response = await fetch(url, {
+        method: 'POST'
+      });
+      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      
+      const result = await response.json();
+      console.log('✅ Exam session added:', result);
+      return result;
     } catch (error) {
-      console.error('Error adding exam session:', error);
+      console.error('❌ Error adding exam session:', error);
       throw error;
     }
   }
