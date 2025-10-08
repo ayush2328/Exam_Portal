@@ -14,6 +14,12 @@ function Dashboard() {
   const [availableDates, setAvailableDates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  // New states for admit card generation
+  const [recentExamSession, setRecentExamSession] = useState(null);
+  const [studentsForRecentExam, setStudentsForRecentExam] = useState([]);
+  const [admitCardLoading, setAdmitCardLoading] = useState(false);
+  const [showAdmitCardSection, setShowAdmitCardSection] = useState(false);
 
   // Generate years (current year and next 2 years)
   const years = Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i);
@@ -112,6 +118,8 @@ function Dashboard() {
     }
 
     try {
+      setLoading(true);
+      
       const submissionPromises = selectedSubjects.map(async (subject) => {
         const examData = {
           subjectCode: subject.code,
@@ -124,10 +132,21 @@ function Dashboard() {
 
       const results = await Promise.all(submissionPromises);
       console.log("All exam sessions submitted successfully:", results);
-      alert(`Successfully submitted ${selectedSubjects.length} exam session(s)!`);
+      
+      // Store the first exam session ID for admit card generation
+      if (results.length > 0 && results[0].id) {
+        setRecentExamSession(results[0].id);
+        
+        // Load students for this exam session
+        await loadStudentsForExamSession(results[0].id);
+        
+        // Show admit card section
+        setShowAdmitCardSection(true);
+      }
 
-      // Reset form
-      setSemester("");
+      alert(`Successfully submitted ${selectedSubjects.length} exam session(s)! Admit card generation is now available below.`);
+
+      // Reset form but keep semester
       setInternalExam("");
       setYear(new Date().getFullYear());
       setMonth("");
@@ -137,13 +156,59 @@ function Dashboard() {
     } catch (error) {
       console.error('Error submitting exam session:', error);
       alert("Error submitting exam session. Please check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadStudentsForExamSession = async (examSessionId) => {
+    try {
+      setAdmitCardLoading(true);
+      const data = await apiService.getStudentsByExamSession(examSessionId);
+      setStudentsForRecentExam(data.students || []);
+      console.log('Loaded students for exam:', data.students);
+    } catch (error) {
+      console.error('Error loading students:', error);
+      alert('Error loading students for admit card generation');
+    } finally {
+      setAdmitCardLoading(false);
+    }
+  };
+
+  const handleGenerateAdmitCard = async (studentId, studentName) => {
+    try {
+      setAdmitCardLoading(true);
+      await apiService.generateAdmitCard(studentId);
+      alert(`Admit card for ${studentName} downloaded successfully! Check your downloads folder.`);
+    } catch (error) {
+      alert('Error generating admit card: ' + error.message);
+    } finally {
+      setAdmitCardLoading(false);
+    }
+  };
+
+  const handleGenerateAllAdmitCards = async () => {
+    if (studentsForRecentExam.length === 0) {
+      alert("No students available for admit card generation!");
+      return;
+    }
+
+    try {
+      setAdmitCardLoading(true);
+      const studentIds = studentsForRecentExam.map(student => student._id);
+      await apiService.generateBulkAdmitCards(studentIds);
+      alert(`Generated admit cards for all ${studentsForRecentExam.length} students! Check your downloads folder.`);
+    } catch (error) {
+      alert('Error generating bulk admit cards: ' + error.message);
+    } finally {
+      setAdmitCardLoading(false);
     }
   };
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>Welcome Admin </h2>
+        <h2>Welcome Admin</h2>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -207,7 +272,6 @@ function Dashboard() {
           <p className="loading-text">Loading subjects...</p>
         ) : availableSubjects.length > 0 ? (
           <div className="subjects-section">
-
             <div className="heading_SubjectSection">
               <h3 className="section-title">
                 Select Subjects for Exam
@@ -295,6 +359,118 @@ function Dashboard() {
           {loading ? "Submitting..." : `Submit ${selectedSubjects.length} Exam Session(s)`}
         </button>
       </form>
+
+      {/* Auto-generated Admit Card Section - Shows after form submission */}
+      {showAdmitCardSection && (
+        <div style={{ 
+          marginTop: '40px', 
+          padding: '20px', 
+          border: '2px solid #4CAF50', 
+          borderRadius: '10px', 
+          backgroundColor: '#f9f9f9',
+          animation: 'fadeIn 0.5s ease-in'
+        }}>
+          <h3 style={{ color: '#4CAF50', marginBottom: '20px' }}>
+            🎫 Admit Card Generation - Ready!
+          </h3>
+          
+          <div style={{ marginBottom: '15px' }}>
+            <p style={{ fontWeight: 'bold', color: '#333' }}>
+              Exam session submitted successfully! Generate admit cards for students:
+            </p>
+            <p style={{ color: '#666', fontSize: '14px' }}>
+              Semester {semester} • {studentsForRecentExam.length} students found
+            </p>
+          </div>
+
+          {admitCardLoading ? (
+            <p>Loading students list...</p>
+          ) : studentsForRecentExam.length > 0 ? (
+            <div>
+              {/* Students List */}
+              <div style={{ 
+                maxHeight: '300px', 
+                overflowY: 'auto', 
+                border: '1px solid #ddd', 
+                borderRadius: '4px', 
+                padding: '10px',
+                marginBottom: '20px'
+              }}>
+                {studentsForRecentExam.map(student => (
+                  <div key={student._id} style={{ 
+                    padding: '10px', 
+                    borderBottom: '1px solid #eee', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between'
+                  }}>
+                    <div>
+                      <strong>{student.student_name}</strong> - {student.reg_no} - {student.course} (Sem {student.sem})
+                    </div>
+                    <button
+                      onClick={() => handleGenerateAdmitCard(student._id, student.student_name)}
+                      disabled={admitCardLoading}
+                      style={{ 
+                        padding: '6px 12px', 
+                        backgroundColor: '#4CAF50', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '4px', 
+                        fontSize: '12px',
+                        cursor: admitCardLoading ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {admitCardLoading ? 'Generating...' : 'Download'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Bulk Actions */}
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={handleGenerateAllAdmitCards}
+                  disabled={admitCardLoading}
+                  style={{ 
+                    padding: '12px 24px', 
+                    backgroundColor: '#2196F3',
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '5px',
+                    fontWeight: 'bold',
+                    cursor: admitCardLoading ? 'not-allowed' : 'pointer'
+                  }}
+                >
+                  {admitCardLoading ? 'Generating...' : `Generate All ${studentsForRecentExam.length} Admit Cards`}
+                </button>
+                
+                <button
+                  onClick={() => setShowAdmitCardSection(false)}
+                  style={{ 
+                    padding: '12px 24px', 
+                    backgroundColor: '#f44336',
+                    color: 'white', 
+                    border: 'none', 
+                    borderRadius: '5px'
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p>No students found for this exam session.</p>
+          )}
+        </div>
+      )}
+
+      {/* Add some CSS animation */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 }
