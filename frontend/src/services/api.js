@@ -101,6 +101,34 @@ export const apiService = {
     }
   },
 
+  // Get students by semester
+  getStudentsBySemester: async (semester) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/students/?sem=${semester}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error('❌ Error fetching students by semester:', error);
+      throw error;
+    }
+  },
+
+  // Clear exam sessions by semester
+  clearExamSessions: async (semester) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/exam-sessions/?sem=${semester}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const result = await response.json();
+      console.log('✅ Exam sessions cleared:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ Error clearing exam sessions:', error);
+      throw error;
+    }
+  },
+
   // Admit card generation function
   generateAdmitCard: async (studentId) => {
     try {

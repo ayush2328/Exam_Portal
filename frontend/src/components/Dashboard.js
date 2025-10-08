@@ -14,7 +14,7 @@ function Dashboard() {
   const [availableDates, setAvailableDates] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  
+
   // New states for admit card generation
   const [recentExamSession, setRecentExamSession] = useState(null);
   const [studentsForRecentExam, setStudentsForRecentExam] = useState([]);
@@ -101,79 +101,93 @@ function Dashboard() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (selectedSubjects.length === 0) {
-      alert("Please select at least one subject!");
-      return;
-    }
+  if (selectedSubjects.length === 0) {
+    alert("Please select at least one subject!");
+    return;
+  }
 
-    const incompleteSubjects = selectedSubjects.filter(subject =>
-      !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
-    );
+  const incompleteSubjects = selectedSubjects.filter(subject =>
+    !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
+  );
 
-    if (incompleteSubjects.length > 0) {
-      alert("Please select date and session for all subjects!");
-      return;
-    }
+  if (incompleteSubjects.length > 0) {
+    alert("Please select date and session for all subjects!");
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
+    
+    const submissionPromises = selectedSubjects.map(async (subject) => {
+      const examData = {
+        subjectCode: subject.code,
+        examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
+        examTime: subjectSessions[subject.code].session,
+        semester: parseInt(semester)
+      };
+      return await apiService.addExamSession(examData);
+    });
+
+    const results = await Promise.all(submissionPromises);
+    console.log("All exam sessions submitted successfully:", results);
+    
+    // FIX: Store ALL exam session IDs, not just the first one
+    const examSessionIds = results.map(result => result.id).filter(id => id);
+    console.log("🎯 All exam session IDs:", examSessionIds);
+    
+    if (examSessionIds.length > 0) {
+      // FIX: Load students using the semester (which finds all sessions)
+      await loadStudentsForExamSession(examSessionIds[0]); // Still use first ID for API call
       
-      const submissionPromises = selectedSubjects.map(async (subject) => {
-        const examData = {
-          subjectCode: subject.code,
-          examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
-          examTime: subjectSessions[subject.code].session,
-          semester: parseInt(semester)
-        };
-        return await apiService.addExamSession(examData);
-      });
-
-      const results = await Promise.all(submissionPromises);
-      console.log("All exam sessions submitted successfully:", results);
-      
-      // Store the first exam session ID for admit card generation
-      if (results.length > 0 && results[0].id) {
-        setRecentExamSession(results[0].id);
-        
-        // Load students for this exam session
-        await loadStudentsForExamSession(results[0].id);
-        
-        // Show admit card section
-        setShowAdmitCardSection(true);
-      }
-
-      alert(`Successfully submitted ${selectedSubjects.length} exam session(s)! Admit card generation is now available below.`);
-
-      // Reset form but keep semester
-      setInternalExam("");
-      setYear(new Date().getFullYear());
-      setMonth("");
-      setSelectedSubjects([]);
-      setSubjectSessions({});
-
-    } catch (error) {
-      console.error('Error submitting exam session:', error);
-      alert("Error submitting exam session. Please check console for details.");
-    } finally {
-      setLoading(false);
+      // Show admit card section
+      setShowAdmitCardSection(true);
     }
-  };
+
+    alert(`Successfully submitted ${selectedSubjects.length} exam session(s)! Admit card generation is now available below.`);
+
+    // Reset form but keep semester
+    setInternalExam("");
+    setYear(new Date().getFullYear());
+    setMonth("");
+    setSelectedSubjects([]);
+    setSubjectSessions({});
+
+  } catch (error) {
+    console.error('Error submitting exam session:', error);
+    alert("Error submitting exam session. Please check console for details.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const loadStudentsForExamSession = async (examSessionId) => {
-    try {
-      setAdmitCardLoading(true);
-      const data = await apiService.getStudentsByExamSession(examSessionId);
-      setStudentsForRecentExam(data.students || []);
-      console.log('Loaded students for exam:', data.students);
-    } catch (error) {
-      console.error('Error loading students:', error);
-      alert('Error loading students for admit card generation');
-    } finally {
-      setAdmitCardLoading(false);
-    }
-  };
+  try {
+    setAdmitCardLoading(true);
+    // FIX: Get students by semester instead of exam session ID
+    const data = await apiService.getStudentsBySemester(semester);
+    setStudentsForRecentExam(data.students || []);
+    console.log('Loaded students for semester:', data.students);
+  } catch (error) {
+    console.error('Error loading students:', error);
+    alert('Error loading students for admit card generation');
+  } finally {
+    setAdmitCardLoading(false);
+  }
+};
+
+const clearPreviousSessions = async () => {
+  try {
+    await apiService.clearExamSessions(semester);
+    alert("Previous exam sessions cleared!");
+  } catch (error) {
+    console.error('Error clearing sessions:', error);
+  }
+};
+
+
+
 
   const handleGenerateAdmitCard = async (studentId, studentName) => {
     try {
@@ -362,18 +376,18 @@ function Dashboard() {
 
       {/* Auto-generated Admit Card Section - Shows after form submission */}
       {showAdmitCardSection && (
-        <div style={{ 
-          marginTop: '40px', 
-          padding: '20px', 
-          border: '2px solid #4CAF50', 
-          borderRadius: '10px', 
+        <div style={{
+          marginTop: '40px',
+          padding: '20px',
+          border: '2px solid #4CAF50',
+          borderRadius: '10px',
           backgroundColor: '#f9f9f9',
           animation: 'fadeIn 0.5s ease-in'
         }}>
           <h3 style={{ color: '#4CAF50', marginBottom: '20px' }}>
             🎫 Admit Card Generation - Ready!
           </h3>
-          
+
           <div style={{ marginBottom: '15px' }}>
             <p style={{ fontWeight: 'bold', color: '#333' }}>
               Exam session submitted successfully! Generate admit cards for students:
@@ -388,20 +402,20 @@ function Dashboard() {
           ) : studentsForRecentExam.length > 0 ? (
             <div>
               {/* Students List */}
-              <div style={{ 
-                maxHeight: '300px', 
-                overflowY: 'auto', 
-                border: '1px solid #ddd', 
-                borderRadius: '4px', 
+              <div style={{
+                maxHeight: '300px',
+                overflowY: 'auto',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
                 padding: '10px',
                 marginBottom: '20px'
               }}>
                 {studentsForRecentExam.map(student => (
-                  <div key={student._id} style={{ 
-                    padding: '10px', 
-                    borderBottom: '1px solid #eee', 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  <div key={student._id} style={{
+                    padding: '10px',
+                    borderBottom: '1px solid #eee',
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'space-between'
                   }}>
                     <div>
@@ -410,12 +424,12 @@ function Dashboard() {
                     <button
                       onClick={() => handleGenerateAdmitCard(student._id, student.student_name)}
                       disabled={admitCardLoading}
-                      style={{ 
-                        padding: '6px 12px', 
-                        backgroundColor: '#4CAF50', 
-                        color: 'white', 
-                        border: 'none', 
-                        borderRadius: '4px', 
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
                         fontSize: '12px',
                         cursor: admitCardLoading ? 'not-allowed' : 'pointer'
                       }}
@@ -431,11 +445,11 @@ function Dashboard() {
                 <button
                   onClick={handleGenerateAllAdmitCards}
                   disabled={admitCardLoading}
-                  style={{ 
-                    padding: '12px 24px', 
+                  style={{
+                    padding: '12px 24px',
                     backgroundColor: '#2196F3',
-                    color: 'white', 
-                    border: 'none', 
+                    color: 'white',
+                    border: 'none',
                     borderRadius: '5px',
                     fontWeight: 'bold',
                     cursor: admitCardLoading ? 'not-allowed' : 'pointer'
@@ -443,14 +457,28 @@ function Dashboard() {
                 >
                   {admitCardLoading ? 'Generating...' : `Generate All ${studentsForRecentExam.length} Admit Cards`}
                 </button>
-                
+                <button 
+  type="button" 
+  onClick={clearPreviousSessions}
+  style={{ 
+    padding: '10px 20px', 
+    backgroundColor: '#ff9800',
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '5px',
+    marginRight: '10px'
+  }}
+>
+  Clear Previous Sessions
+</button>
+
                 <button
                   onClick={() => setShowAdmitCardSection(false)}
-                  style={{ 
-                    padding: '12px 24px', 
+                  style={{
+                    padding: '12px 24px',
                     backgroundColor: '#f44336',
-                    color: 'white', 
-                    border: 'none', 
+                    color: 'white',
+                    border: 'none',
                     borderRadius: '5px'
                   }}
                 >

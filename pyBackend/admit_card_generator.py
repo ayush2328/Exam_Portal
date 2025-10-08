@@ -22,10 +22,22 @@ def generate_admit_card(student_data, exam_data_list):
     pdf.setFillColorRGB(*primary_color)
     pdf.rect(0, height-60, width, 60, fill=1, stroke=0)
     
+    # SRM Logo - Hardcoded (you can replace this with actual SRM logo image)
+    try:
+        # Draw SRM logo placeholder (you can replace this with actual logo file)
+        pdf.setFillColorRGB(1, 1, 1)  # White background for logo
+        pdf.rect(50, height-50, 40, 40, fill=1, stroke=1)
+        pdf.setFillColorRGB(*primary_color)
+        pdf.setFont("Helvetica-Bold", 10)
+        pdf.drawString(55, height-35, "SRM")
+        pdf.drawString(55, height-45, "LOGO")
+    except Exception as e:
+        print(f"Warning: Could not draw SRM logo: {e}")
+    
     # Header text
     pdf.setFillColorRGB(1, 1, 1)  # White text
     pdf.setFont("Helvetica-Bold", 14)
-    pdf.drawString(50, height-30, "Internal Examinations - I, September 2025")
+    pdf.drawString(100, height-30, "Internal Examinations - I, September 2025")
     pdf.setFont("Helvetica-Bold", 18)
     pdf.drawCentredString(width/2, height-65, "HALL TICKET")
     
@@ -81,28 +93,77 @@ def generate_admit_card(student_data, exam_data_list):
     program_section = f"{student_data.get('course', 'BTECH')} - {student_data.get('branch', 'CSE - CS')}/A"
     pdf.drawString(width/2, y_position - 60, program_section.upper())
     
-    # Student Photo (if available)
-    try:
-        photo_path = student_data.get('pic', '')
+    # Student Photo Section (Dynamic for each student)
+    photo_drawn = False
+    
+    # Try to load student photo from multiple possible locations
+    photo_paths_to_try = [
+        student_data.get('pic', ''),
+        student_data.get('photo', ''),
+        student_data.get('image', ''),
+        f"photos/{student_data.get('roll_number', '')}.jpg",
+        f"images/{student_data.get('roll_number', '')}.jpg",
+        f"student_photos/{student_data.get('roll_number', '')}.jpg"
+    ]
+    
+    for photo_path in photo_paths_to_try:
         if photo_path and os.path.exists(photo_path):
-            # Draw photo on right side
-            img = ImageReader(photo_path)
-            pdf.drawImage(img, width-100, y_position-80, width=80, height=80, preserveAspectRatio=True, mask='auto')
-        else:
-            # Draw photo placeholder
+            try:
+                # Draw student photo
+                img = ImageReader(photo_path)
+                pdf.drawImage(img, width-100, y_position-80, width=80, height=80, preserveAspectRatio=True, mask='auto')
+                photo_drawn = True
+                print(f"✅ Student photo loaded: {photo_path}")
+                break
+            except Exception as e:
+                print(f"⚠️ Could not load student photo from {photo_path}: {e}")
+                continue
+    
+    # If no student photo found, draw default photo placeholder
+    if not photo_drawn:
+        try:
+            # Try to load a default photo if exists
+            default_photos = [
+                "default_student_photo.jpg",
+                "images/default_photo.jpg", 
+                "photos/default.jpg",
+                "default_photo.png"
+            ]
+            
+            default_loaded = False
+            for default_photo in default_photos:
+                if os.path.exists(default_photo):
+                    img = ImageReader(default_photo)
+                    pdf.drawImage(img, width-100, y_position-80, width=80, height=80, preserveAspectRatio=True, mask='auto')
+                    default_loaded = True
+                    print(f"✅ Default photo loaded: {default_photo}")
+                    break
+            
+            if not default_loaded:
+                # Draw photo placeholder with student initial
+                pdf.setFillColorRGB(0.8, 0.9, 1.0)  # Light blue background
+                pdf.rect(width-100, y_position-80, 80, 80, fill=1, stroke=1)
+                pdf.setFillColorRGB(*primary_color)
+                pdf.setFont("Helvetica-Bold", 16)
+                
+                # Get student initial for placeholder
+                student_name = student_data.get('name', 'S')
+                initial = student_name[0].upper() if student_name else 'S'
+                pdf.drawCentredString(width-60, y_position-40, initial)
+                
+                pdf.setFillColorRGB(0.5, 0.5, 0.5)
+                pdf.setFont("Helvetica", 6)
+                pdf.drawCentredString(width-60, y_position-55, "PHOTO")
+                print("✅ Default photo placeholder drawn with initial")
+                
+        except Exception as e:
+            print(f"❌ Error creating default photo: {e}")
+            # Final fallback - simple rectangle
             pdf.setFillColorRGB(0.9, 0.9, 0.9)
             pdf.rect(width-100, y_position-80, 80, 80, fill=1, stroke=1)
             pdf.setFillColorRGB(0.5, 0.5, 0.5)
             pdf.setFont("Helvetica", 8)
             pdf.drawCentredString(width-60, y_position-40, "PHOTO")
-    except Exception as e:
-        print(f"Warning: Could not load student photo: {e}")
-        # Draw photo placeholder
-        pdf.setFillColorRGB(0.9, 0.9, 0.9)
-        pdf.rect(width-100, y_position-80, 80, 80, fill=1, stroke=1)
-        pdf.setFillColorRGB(0.5, 0.5, 0.5)
-        pdf.setFont("Helvetica", 8)
-        pdf.drawCentredString(width-60, y_position-40, "PHOTO")
     
     # Line separator before table
     y_position -= 100
@@ -195,15 +256,28 @@ def generate_admit_card(student_data, exam_data_list):
         # Check if we need a new page
         if y_position < 100:
             pdf.showPage()
-            y_position = height - 50
-            # Redraw header on new page
+            
+            # Redraw header with SRM logo on new page
             pdf.setFillColorRGB(*primary_color)
             pdf.rect(0, height-60, width, 60, fill=1, stroke=0)
+            
+            # SRM Logo on new page
+            try:
+                pdf.setFillColorRGB(1, 1, 1)
+                pdf.rect(50, height-50, 40, 40, fill=1, stroke=1)
+                pdf.setFillColorRGB(*primary_color)
+                pdf.setFont("Helvetica-Bold", 10)
+                pdf.drawString(55, height-35, "SRM")
+                pdf.drawString(55, height-45, "LOGO")
+            except:
+                pass
+            
             pdf.setFillColorRGB(1, 1, 1)
             pdf.setFont("Helvetica-Bold", 14)
-            pdf.drawString(50, height-30, "Internal Examinations - I, September 2025 - Contd.")
+            pdf.drawString(100, height-30, "Internal Examinations - I, September 2025 - Contd.")
+            
             # Redraw table header on new page
-            y_position -= 30
+            y_position = height - 80
             pdf.setFillColorRGB(*primary_color)
             pdf.setFont("Helvetica-Bold", 10)
             for i, header in enumerate(headers):
@@ -253,10 +327,10 @@ def generate_admit_card(student_data, exam_data_list):
             y_position -= 25
         
         # Date
-        pdf.drawString(col_positions[3], y_position + 25, exam["date"])  # Adjusted for line wrapping
+        pdf.drawString(col_positions[3], y_position + 25, exam["date"])
         
         # Session
-        pdf.drawString(col_positions[4], y_position + 25, exam["session"])  # Adjusted for line wrapping
+        pdf.drawString(col_positions[4], y_position + 25, exam["session"])
     
     # End of statement
     y_position -= 30
@@ -297,18 +371,64 @@ def generate_admit_card(student_data, exam_data_list):
     buffer.seek(0)
     return buffer
 
+# Create a default student photo (you can replace this with actual default image)
+def create_default_photo_if_not_exists():
+    """Create a simple default photo if it doesn't exist"""
+    default_photo_path = "default_student_photo.jpg"
+    if not os.path.exists(default_photo_path):
+        try:
+            # Create a simple default photo using reportlab
+            from reportlab.lib.pagesizes import letter
+            from reportlab.lib.colors import lightblue, darkblue
+            
+            buf = io.BytesIO()
+            c = canvas.Canvas(buf, pagesize=(200, 200))
+            c.setFillColor(lightblue)
+            c.rect(0, 0, 200, 200, fill=1, stroke=0)
+            c.setFillColor(darkblue)
+            c.setFont("Helvetica-Bold", 40)
+            c.drawCentredString(100, 90, "SRM")
+            c.setFont("Helvetica", 15)
+            c.drawCentredString(100, 50, "Student")
+            c.save()
+            
+            # Convert to image (this is a simplified approach)
+            # In production, you should use an actual default image file
+            print("ℹ️  Please add a proper default_student_photo.jpg file")
+            
+        except Exception as e:
+            print(f"Note: Could not create default photo: {e}")
+
 # Test function for multiple subjects
 def test_multiple_subjects():
     """Test function for multiple exam sessions"""
-    # Test data for multiple subjects
-    test_student = {
-        "name": "Keshav Chauhan",
-        "roll_number": "RA2411030030001",
-        "course": "B.Tech",
-        "branch": "CSE - CS",
-        "semester": "3rd Semester",
-        "pic": "pic_01.png"  # Add path to test photo if available
-    }
+    # Test data for multiple subjects with different photo scenarios
+    test_students = [
+        {
+            "name": "Keshav Chauhan",
+            "roll_number": "RA2411030030001",
+            "course": "B.Tech",
+            "branch": "CSE - CS",
+            "semester": "3rd Semester",
+            "pic": "pic_01.png"  # Existing photo
+        },
+        {
+            "name": "Raj Aryan", 
+            "roll_number": "RA2411030030002",
+            "course": "B.Tech",
+            "branch": "CSE - CS",
+            "semester": "3rd Semester",
+            "pic": ""  # No photo - should use default
+        },
+        {
+            "name": "Sushant Bhardwaj",
+            "roll_number": "RA2411030030003", 
+            "course": "B.Tech",
+            "branch": "CSE - CS",
+            "semester": "3rd Semester"
+            # No pic field at all - should use default
+        }
+    ]
     
     # Multiple exam sessions
     test_exams = [
@@ -323,53 +443,54 @@ def test_multiple_subjects():
             "subject_name": "OPERATING SYSTEMS",
             "exam_date": "2024-12-16",
             "exam_time": "Afternoon"
-        },
-        {
-            "subject_code": "21MAB206T",
-            "subject_name": "NUMERICAL METHODS AND ANALYSIS",
-            "exam_date": "2024-12-17", 
-            "exam_time": "Morning"
         }
     ]
     
-    pdf_buffer = generate_admit_card(test_student, test_exams)
-    
-    # Save test PDF
-    with open("multiple_subjects_admit_card.pdf", "wb") as f:
-        f.write(pdf_buffer.getvalue())
-    
-    print("✅ Multiple subjects admit card generated: multiple_subjects_admit_card.pdf")
+    # Generate admit cards for all test students
+    for i, student in enumerate(test_students):
+        pdf_buffer = generate_admit_card(student, test_exams)
+        
+        # Save test PDF
+        filename = f"test_admit_card_{i+1}_{student['name'].replace(' ', '_')}.pdf"
+        with open(filename, "wb") as f:
+            f.write(pdf_buffer.getvalue())
+        
+        print(f"✅ Admit card generated: {filename}")
 
-# Test function for single subject (backward compatibility)
+# Test function for single subject
 def test_single_subject():
     """Test function for single exam session"""
-    # Test data for single subject
     test_student = {
-        "name": "Keshav Chauhan",
+        "name": "Test Student",
         "roll_number": "RA2411030030001",
         "course": "B.Tech",
         "branch": "CSE - CS",
         "semester": "3rd Semester",
-        "pic": "pic_01.png"  # Add path to test photo if available
+        "pic": "non_existent_photo.jpg"  # Non-existent photo
     }
     
     test_exam = {
         "subject_code": "21CSC201J",
-        "subject_name": "DATA STRUCTURES AND ALGORITHMS",
+        "subject_name": "DATA STRUCTURES AND ALGORITHMS", 
         "exam_date": "2024-12-15",
         "exam_time": "Morning"
     }
     
     pdf_buffer = generate_admit_card(test_student, test_exam)
     
-    # Save test PDF
     with open("single_subject_admit_card.pdf", "wb") as f:
         f.write(pdf_buffer.getvalue())
     
     print("✅ Single subject admit card generated: single_subject_admit_card.pdf")
 
 if __name__ == "__main__":
-    # Run both tests
+    # Create default photo if needed
+    create_default_photo_if_not_exists()
+    
+    # Run tests
     test_single_subject()
     test_multiple_subjects()
     print("🎫 All test admit cards generated successfully!")
+    print("\n📝 Note: To use actual SRM logo, replace the logo placeholder with:")
+    print("   - Add 'srm_logo.png' file in the same directory")
+    print("   - Update the code to use: ImageReader('srm_logo.png')")

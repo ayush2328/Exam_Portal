@@ -190,32 +190,50 @@ async def generate_admit_card_pdf(student_id: str):
             print("❌ Student not found in database")
             raise HTTPException(status_code=404, detail="Student not found")
         
-        print(f"✅ Found student: {student.get('student_name', 'Unknown')}")
-        
-        # Get exam data for the student's semester
+        student_name = student.get('student_name', 'Unknown')
         student_semester = student.get("sem", "")
-        print(f"🔍 Looking for ALL exam sessions for semester: {student_semester}")
+        print(f"✅ Found student: {student_name} in semester: {student_semester}")
         
-        # Get ALL exam sessions for this semester, not just one
+        # FIX: Handle both semester formats - "3rd Semester" and 3
+        student_semester_text = student_semester  # "3rd Semester"
+        
+        # Convert to numeric format for querying
+        if isinstance(student_semester, str) and "Semester" in student_semester:
+            semester_num = student_semester.replace("Semester", "").strip()
+            if semester_num == "3rd":
+                student_semester_num = 3
+            elif semester_num == "2nd":
+                student_semester_num = 2
+            elif semester_num == "1st":
+                student_semester_num = 1
+            else:
+                # Try to extract number from string
+                try:
+                    student_semester_num = int(''.join(filter(str.isdigit, semester_num)))
+                except:
+                    student_semester_num = 3  # Default fallback
+        else:
+            student_semester_num = int(student_semester) if student_semester else 3
+        
+        print(f"🔄 Student semester formats - Text: '{student_semester_text}', Number: {student_semester_num}")
+        
+        # FIX: Query for BOTH semester formats
         exam_sessions = list(exam_sessions_collection.find({
-            "sem": student_semester
+            "$or": [
+                {"sem": student_semester_text},  # Match "3rd Semester"
+                {"sem": student_semester_num}    # Match 3
+            ]
         }))
         
-        print(f"📊 Found {len(exam_sessions)} exam sessions for semester {student_semester}")
+        print(f"📊 Found {len(exam_sessions)} exam sessions for semester (both formats)")
+        
+        # DEBUG: Print all found exam sessions
+        for i, session in enumerate(exam_sessions):
+            print(f"   Session {i+1}: {session.get('subject_code', 'N/A')} - {session.get('exam_date', 'N/A')} - {session.get('exam_time', 'N/A')} - sem: {session.get('sem', 'N/A')}")
         
         if not exam_sessions:
-            print("❌ No exam sessions found for student's semester")
-            print("🔄 Creating default exam session...")
-            # Create a default exam session
-            default_exam = {
-                "subject_code": "21CSC201J",
-                "exam_date": "2024-12-15", 
-                "exam_time": "Morning",
-                "sem": student_semester
-            }
-            exam_sessions_collection.insert_one(default_exam)
-            exam_sessions = [default_exam]
-            print("✅ Created default exam session")
+            print("❌ No exam sessions found for this semester!")
+            raise HTTPException(status_code=404, detail=f"No exam sessions found for semester {student_semester}. Please submit exam sessions first.")
         
         # Prepare student data
         student_data = {
@@ -228,7 +246,7 @@ async def generate_admit_card_pdf(student_id: str):
             "dob": student.get("dob", ""),
             "contact_no": student.get("contact_no", ""),
             "email_id": student.get("email_id", ""),
-            "pic": student.get("pic", "")  # Add photo path if available
+            "pic": student.get("pic", "")
         }
         
         # Prepare exam data for ALL sessions
@@ -237,23 +255,19 @@ async def generate_admit_card_pdf(student_id: str):
             subject_code = exam_session.get("subject_code", "")
             subject_name = ""
             
+            # Get subject name from subjects collection
             if subject_code:
                 subject_doc = subjects_collection.find_one({"subject_code": subject_code})
                 if subject_doc:
                     subject_name = subject_doc.get("subject_name", "")
+                    print(f"✅ Found subject name: {subject_name} for code: {subject_code}")
+                else:
+                    print(f"⚠️  Subject not found in database for code: {subject_code}")
             
-            # If subject name not found, use a default based on code
+            # If subject name not found, use the code as fallback
             if not subject_name:
-                # Map common subject codes to names
-                subject_name_map = {
-                    "21CSC201J": "DATA STRUCTURES AND ALGORITHMS",
-                    "21CSC202J": "OPERATING SYSTEMS", 
-                    "21CSC203P": "ADVANCED PROGRAMMING PRACTICE",
-                    "21CSS201T": "COMPUTER ORGANIZATION AND ARCHITECTURE",
-                    "21MAB206T": "NUMERICAL METHODS AND ANALYSIS"
-                }
-                subject_name = subject_name_map.get(subject_code, f"Subject {subject_code}")
-                print(f"⚠️  Subject name not found for code {subject_code}, using mapped name")
+                subject_name = subject_code
+                print(f"⚠️  Using subject code as name: {subject_code}")
             
             exam_data = {
                 "subject_code": subject_code,
@@ -262,29 +276,30 @@ async def generate_admit_card_pdf(student_id: str):
                 "exam_time": exam_session.get("exam_time", "")
             }
             all_exam_data.append(exam_data)
-            print(f"📅 Added exam session: {exam_data}")
+            print(f"📅 Added exam session: {subject_code} - {exam_session.get('exam_date')} - {exam_session.get('exam_time')}")
         
-        print(f"📄 Student data for PDF: {student_data}")
-        print(f"📅 All exam data for PDF: {all_exam_data}")
+        print(f"🎯 Final exam data being sent to PDF: {len(all_exam_data)} sessions")
         
         # Generate PDF with ALL exam sessions
         print("🔄 Importing PDF generator...")
         from admit_card_generator import generate_admit_card
         print("✅ PDF generator imported")
         
-        print("🔄 Generating PDF with multiple sessions...")
+        print("🔄 Generating PDF...")
         pdf_buffer = generate_admit_card(student_data, all_exam_data)
         print("✅ PDF generated successfully")
         
-        student_name = student.get("student_name", "student").replace(" ", "_")
+        student_name_clean = student_name.replace(" ", "_")
         print(f"📤 Returning PDF response for: {student_name}")
         
         return Response(
             content=pdf_buffer.getvalue(),
             media_type="application/pdf",
-            headers={"Content-Disposition": f"attachment; filename=admit_card_{student_name}.pdf"}
+            headers={"Content-Disposition": f"attachment; filename=admit_card_{student_name_clean}.pdf"}
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"❌ CRITICAL ERROR in admit card generation:")
         print(f"❌ Error type: {type(e).__name__}")
@@ -352,6 +367,43 @@ async def test_data():
         }
     except Exception as e:
         return {"error": f"Test failed: {str(e)}"}
+    
+@app.delete("/exam-sessions/")
+async def delete_exam_sessions(sem: int = None):
+    """Delete exam sessions, optionally filtered by semester"""
+    if not MONGO_AVAILABLE:
+        raise HTTPException(status_code=500, detail="MongoDB not available")
+    
+    try:
+        # Handle both text and numeric semester formats
+        if sem is not None:
+            # Convert numeric semester to text format for querying
+            semester_text_map = {
+                1: "1st Semester",
+                2: "2nd Semester", 
+                3: "3rd Semester",
+                4: "4th Semester",
+                5: "5th Semester",
+                6: "6th Semester", 
+                7: "7th Semester",
+                8: "8th Semester"
+            }
+            semester_text = semester_text_map.get(sem, f"{sem}th Semester")
+            
+            # Query for both formats
+            query = {
+                "$or": [
+                    {"sem": sem},
+                    {"sem": semester_text}
+                ]
+            }
+        else:
+            query = {}
+            
+        result = exam_sessions_collection.delete_many(query)
+        return {"message": f"Deleted {result.deleted_count} exam session(s)"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error deleting exam sessions: {str(e)}")
 
 @app.get("/health/")
 async def health_check():
@@ -382,6 +434,24 @@ async def debug_students():
             "total_students": students_collection.count_documents({}),
             "sample_students": students,
             "field_names": list(students[0].keys()) if students else []
+        }
+    except Exception as e:
+        return {"error": f"Debug failed: {str(e)}"}
+    
+@app.get("/debug-exam-sessions/")
+async def debug_exam_sessions():
+    """Debug endpoint to check all exam sessions"""
+    if not MONGO_AVAILABLE:
+        return {"error": "MongoDB not available"}
+    
+    try:
+        # Get all exam sessions
+        sessions = list(exam_sessions_collection.find())
+        sessions = [convert_objectid(session) for session in sessions]
+        
+        return {
+            "total_sessions": len(sessions),
+            "sessions": sessions
         }
     except Exception as e:
         return {"error": f"Debug failed: {str(e)}"}
