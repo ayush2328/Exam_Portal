@@ -1,11 +1,16 @@
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from pymongo import MongoClient
 from bson import ObjectId
 import os
 import json
 
 app = FastAPI(title="Exam Portal API", version="1.0.0")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 
 # CORS middleware
 app.add_middleware(
@@ -98,14 +103,14 @@ async def get_students(sem: int = None):
         return {"error": "MongoDB not available", "students": []}
     
     try:
-        # Convert numeric semester to text format if provided
+        # Filter by semester if provided
         if sem is not None:
             semester_text_map = {
                 1: "1st Semester",
-                2: "2nd Semester", 
+                2: "2nd Semester",
                 3: "3rd Semester",
                 4: "4th Semester",
-                5: "5th Semester", 
+                5: "5th Semester",
                 6: "6th Semester",
                 7: "7th Semester",
                 8: "8th Semester"
@@ -114,12 +119,25 @@ async def get_students(sem: int = None):
             query = {"sem": semester_text}
         else:
             query = {}
-            
+        
         students = list(students_collection.find(query))
-        students = [convert_objectid(student) for student in students]
+        
+        for student in students:
+            # Convert _id to string
+            student["_id"] = str(student["_id"])
+            
+            # Public URL for frontend display
+            student["image_url"] = f"http://localhost:8000/static/student_images/{student.get('pic', '')}"
+            
+            # Full local path for PDF generator
+            student["image_path"] = os.path.join("static", "student_images", student.get("pic", "default_student_photo.jpg"))
+        
         return {"students": students}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching students: {str(e)}")
+
+
 
 @app.get("/students-by-exam/{exam_session_id}")
 async def get_students_by_exam_session(exam_session_id: str):
@@ -184,58 +202,69 @@ async def generate_admit_card_pdf(student_id: str):
     try:
         print(f"🔍 Looking for student with ID: {student_id}")
         
-        # Get student data using _id (MongoDB ObjectId)
+        # Get student data
         student = students_collection.find_one({"_id": ObjectId(student_id)})
         if not student:
-            print("❌ Student not found in database")
             raise HTTPException(status_code=404, detail="Student not found")
         
         student_name = student.get('student_name', 'Unknown')
         student_semester = student.get("sem", "")
-        print(f"✅ Found student: {student_name} in semester: {student_semester}")
+        print(f"✅ Found student: {student_name}")
         
-        # FIX: Handle both semester formats - "3rd Semester" and 3
-        student_semester_text = student_semester  # "3rd Semester"
-        
-        # Convert to numeric format for querying
+        # Get ALL exam sessions for this semester
+        student_semester_text = student_semester
         if isinstance(student_semester, str) and "Semester" in student_semester:
             semester_num = student_semester.replace("Semester", "").strip()
             if semester_num == "3rd":
                 student_semester_num = 3
-            elif semester_num == "2nd":
-                student_semester_num = 2
-            elif semester_num == "1st":
-                student_semester_num = 1
             else:
-                # Try to extract number from string
                 try:
                     student_semester_num = int(''.join(filter(str.isdigit, semester_num)))
                 except:
-                    student_semester_num = 3  # Default fallback
+                    student_semester_num = 3
         else:
             student_semester_num = int(student_semester) if student_semester else 3
         
-        print(f"🔄 Student semester formats - Text: '{student_semester_text}', Number: {student_semester_num}")
-        
-        # FIX: Query for BOTH semester formats
         exam_sessions = list(exam_sessions_collection.find({
             "$or": [
-                {"sem": student_semester_text},  # Match "3rd Semester"
-                {"sem": student_semester_num}    # Match 3
+                {"sem": student_semester_text},
+                {"sem": student_semester_num}
             ]
         }))
         
-        print(f"📊 Found {len(exam_sessions)} exam sessions for semester (both formats)")
-        
-        # DEBUG: Print all found exam sessions
-        for i, session in enumerate(exam_sessions):
-            print(f"   Session {i+1}: {session.get('subject_code', 'N/A')} - {session.get('exam_date', 'N/A')} - {session.get('exam_time', 'N/A')} - sem: {session.get('sem', 'N/A')}")
+        print(f"📊 Found {len(exam_sessions)} exam sessions")
         
         if not exam_sessions:
-            print("❌ No exam sessions found for this semester!")
-            raise HTTPException(status_code=404, detail=f"No exam sessions found for semester {student_semester}. Please submit exam sessions first.")
+            raise HTTPException(status_code=404, detail=f"No exam sessions found for semester {student_semester}")
         
-        # Prepare student data
+        # FIX PHOTO PATH HANDLING
+        raw_photo_path = student.get("pic", "")
+        print(f"📸 Raw photo path from DB: '{raw_photo_path}'")
+        
+        # Convert relative path to absolute path
+        if raw_photo_path:
+            # Handle different path formats
+            photo_paths_to_try = [
+                raw_photo_path,  # Original path from DB
+                f"static/student_images/{raw_photo_path}",  # Add static prefix
+                f"pyBackend/static/student_images/{raw_photo_path}",  # Full path
+                f"../static/student_images/{raw_photo_path}",  # Relative path
+            ]
+            
+            final_photo_path = ""
+            for path in photo_paths_to_try:
+                if os.path.exists(path):
+                    final_photo_path = path
+                    print(f"✅ Found photo at: {path}")
+                    break
+            
+            if not final_photo_path:
+                print(f"❌ Photo not found at any path for: {raw_photo_path}")
+        else:
+            final_photo_path = ""
+            print("❌ No photo path in student record")
+        
+        # Prepare student data with corrected photo path
         student_data = {
             "name": student.get("student_name", ""),
             "roll_number": student.get("reg_no", ""),
@@ -246,7 +275,7 @@ async def generate_admit_card_pdf(student_id: str):
             "dob": student.get("dob", ""),
             "contact_no": student.get("contact_no", ""),
             "email_id": student.get("email_id", ""),
-            "pic": student.get("pic", "")
+            "pic": final_photo_path  # Use the corrected path
         }
         
         # Prepare exam data for ALL sessions
@@ -255,19 +284,13 @@ async def generate_admit_card_pdf(student_id: str):
             subject_code = exam_session.get("subject_code", "")
             subject_name = ""
             
-            # Get subject name from subjects collection
             if subject_code:
                 subject_doc = subjects_collection.find_one({"subject_code": subject_code})
                 if subject_doc:
                     subject_name = subject_doc.get("subject_name", "")
-                    print(f"✅ Found subject name: {subject_name} for code: {subject_code}")
-                else:
-                    print(f"⚠️  Subject not found in database for code: {subject_code}")
             
-            # If subject name not found, use the code as fallback
             if not subject_name:
                 subject_name = subject_code
-                print(f"⚠️  Using subject code as name: {subject_code}")
             
             exam_data = {
                 "subject_code": subject_code,
@@ -276,37 +299,20 @@ async def generate_admit_card_pdf(student_id: str):
                 "exam_time": exam_session.get("exam_time", "")
             }
             all_exam_data.append(exam_data)
-            print(f"📅 Added exam session: {subject_code} - {exam_session.get('exam_date')} - {exam_session.get('exam_time')}")
         
-        print(f"🎯 Final exam data being sent to PDF: {len(all_exam_data)} sessions")
-        
-        # Generate PDF with ALL exam sessions
-        print("🔄 Importing PDF generator...")
+        # Generate PDF
         from admit_card_generator import generate_admit_card
-        print("✅ PDF generator imported")
-        
-        print("🔄 Generating PDF...")
         pdf_buffer = generate_admit_card(student_data, all_exam_data)
-        print("✅ PDF generated successfully")
         
         student_name_clean = student_name.replace(" ", "_")
-        print(f"📤 Returning PDF response for: {student_name}")
-        
         return Response(
             content=pdf_buffer.getvalue(),
             media_type="application/pdf",
             headers={"Content-Disposition": f"attachment; filename=admit_card_{student_name_clean}.pdf"}
         )
         
-    except HTTPException:
-        raise
     except Exception as e:
-        print(f"❌ CRITICAL ERROR in admit card generation:")
-        print(f"❌ Error type: {type(e).__name__}")
-        print(f"❌ Error message: {str(e)}")
-        import traceback
-        print(f"❌ Full traceback:")
-        traceback.print_exc()
+        print(f"❌ Error generating admit card: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error generating admit card: {str(e)}")
 
 @app.get("/test-pdf")

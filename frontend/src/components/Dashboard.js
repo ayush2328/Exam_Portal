@@ -101,90 +101,90 @@ function Dashboard() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (selectedSubjects.length === 0) {
-    alert("Please select at least one subject!");
-    return;
-  }
-
-  const incompleteSubjects = selectedSubjects.filter(subject =>
-    !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
-  );
-
-  if (incompleteSubjects.length > 0) {
-    alert("Please select date and session for all subjects!");
-    return;
-  }
-
-  try {
-    setLoading(true);
-    
-    const submissionPromises = selectedSubjects.map(async (subject) => {
-      const examData = {
-        subjectCode: subject.code,
-        examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
-        examTime: subjectSessions[subject.code].session,
-        semester: parseInt(semester)
-      };
-      return await apiService.addExamSession(examData);
-    });
-
-    const results = await Promise.all(submissionPromises);
-    console.log("All exam sessions submitted successfully:", results);
-    
-    // FIX: Store ALL exam session IDs, not just the first one
-    const examSessionIds = results.map(result => result.id).filter(id => id);
-    console.log("🎯 All exam session IDs:", examSessionIds);
-    
-    if (examSessionIds.length > 0) {
-      // FIX: Load students using the semester (which finds all sessions)
-      await loadStudentsForExamSession(examSessionIds[0]); // Still use first ID for API call
-      
-      // Show admit card section
-      setShowAdmitCardSection(true);
+    if (selectedSubjects.length === 0) {
+      alert("Please select at least one subject!");
+      return;
     }
 
-    alert(`Successfully submitted ${selectedSubjects.length} exam session(s)! Admit card generation is now available below.`);
+    const incompleteSubjects = selectedSubjects.filter(subject =>
+      !subjectSessions[subject.code]?.date || !subjectSessions[subject.code]?.session
+    );
 
-    // Reset form but keep semester
-    setInternalExam("");
-    setYear(new Date().getFullYear());
-    setMonth("");
-    setSelectedSubjects([]);
-    setSubjectSessions({});
+    if (incompleteSubjects.length > 0) {
+      alert("Please select date and session for all subjects!");
+      return;
+    }
 
-  } catch (error) {
-    console.error('Error submitting exam session:', error);
-    alert("Error submitting exam session. Please check console for details.");
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+
+      const submissionPromises = selectedSubjects.map(async (subject) => {
+        const examData = {
+          subjectCode: subject.code,
+          examDate: `${year}-${month}-${subjectSessions[subject.code].date.toString().padStart(2, '0')}`,
+          examTime: subjectSessions[subject.code].session,
+          semester: parseInt(semester)
+        };
+        return await apiService.addExamSession(examData);
+      });
+
+      const results = await Promise.all(submissionPromises);
+      console.log("All exam sessions submitted successfully:", results);
+
+      // FIX: Store ALL exam session IDs, not just the first one
+      const examSessionIds = results.map(result => result.id).filter(id => id);
+      console.log("🎯 All exam session IDs:", examSessionIds);
+
+      if (examSessionIds.length > 0) {
+        // FIX: Load students using the semester (which finds all sessions)
+        await loadStudentsForExamSession(examSessionIds[0]); // Still use first ID for API call
+
+        // Show admit card section
+        setShowAdmitCardSection(true);
+      }
+
+      alert(`Successfully submitted ${selectedSubjects.length} exam session(s)! Admit card generation is now available below.`);
+
+      // Reset form but keep semester
+      setInternalExam("");
+      setYear(new Date().getFullYear());
+      setMonth("");
+      setSelectedSubjects([]);
+      setSubjectSessions({});
+
+    } catch (error) {
+      console.error('Error submitting exam session:', error);
+      alert("Error submitting exam session. Please check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadStudentsForExamSession = async (examSessionId) => {
-  try {
-    setAdmitCardLoading(true);
-    // FIX: Get students by semester instead of exam session ID
-    const data = await apiService.getStudentsBySemester(semester);
-    setStudentsForRecentExam(data.students || []);
-    console.log('Loaded students for semester:', data.students);
-  } catch (error) {
-    console.error('Error loading students:', error);
-    alert('Error loading students for admit card generation');
-  } finally {
-    setAdmitCardLoading(false);
-  }
-};
+    try {
+      setAdmitCardLoading(true);
+      // FIX: Get students by semester instead of exam session ID
+      const data = await apiService.getStudentsBySemester(semester);
+      setStudentsForRecentExam(data.students || []);
+      console.log('Loaded students for semester:', data.students);
+    } catch (error) {
+      console.error('Error loading students:', error);
+      alert('Error loading students for admit card generation');
+    } finally {
+      setAdmitCardLoading(false);
+    }
+  };
 
-const clearPreviousSessions = async () => {
-  try {
-    await apiService.clearExamSessions(semester);
-    alert("Previous exam sessions cleared!");
-  } catch (error) {
-    console.error('Error clearing sessions:', error);
-  }
-};
+  const clearPreviousSessions = async () => {
+    try {
+      await apiService.clearExamSessions(semester);
+      alert("Previous exam sessions cleared!");
+    } catch (error) {
+      console.error('Error clearing sessions:', error);
+    }
+  };
 
 
 
@@ -248,6 +248,12 @@ const clearPreviousSessions = async () => {
             <label>Branch:</label>
             <select value={branch} onChange={e => setBranch(e.target.value)} required>
               <option value="Cyber Security">Cyber Security</option>
+              <option value="Cyber Security">Cloud Computing</option>
+              <option value="Cyber Security">Data Science</option>
+              <option value="Cyber Security">AI/ML</option>
+              <option value="Cyber Security">CORE</option>
+              <option value="Cyber Security">Bussiness Analytic</option>
+              <option value="Cyber Security">Bussiness Studies</option>
               <option value="CSE">CSE</option>
               <option value="ECE">ECE</option>
             </select>
@@ -288,8 +294,8 @@ const clearPreviousSessions = async () => {
           <div className="subjects-section">
             <div className="heading_SubjectSection">
               <h3 className="section-title">
-                Select Subjects for Exam
-                <span className="selection-count">{availableSubjects.length} subjects</span>
+                Select Subjects for Exam 
+                <span className="selection-count">{" "+availableSubjects.length} subjects</span>
               </h3>
             </div>
             <div className="subjects-list">
@@ -317,7 +323,7 @@ const clearPreviousSessions = async () => {
             <div className="section-titleCSS">
               <h3 className="section-title">
                 Exam Schedule for Selected Subjects
-                <span className="selection-count">{selectedSubjects.length} selected</span>
+                <span className="selection-count">{" "+selectedSubjects.length} selected</span>
               </h3>
             </div>
 
@@ -457,20 +463,20 @@ const clearPreviousSessions = async () => {
                 >
                   {admitCardLoading ? 'Generating...' : `Generate All ${studentsForRecentExam.length} Admit Cards`}
                 </button>
-                <button 
-  type="button" 
-  onClick={clearPreviousSessions}
-  style={{ 
-    padding: '10px 20px', 
-    backgroundColor: '#ff9800',
-    color: 'white', 
-    border: 'none', 
-    borderRadius: '5px',
-    marginRight: '10px'
-  }}
->
-  Clear Previous Sessions
-</button>
+                <button
+                  type="button"
+                  onClick={clearPreviousSessions}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#ff9800',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    marginRight: '10px'
+                  }}
+                >
+                  Clear Previous Sessions
+                </button>
 
                 <button
                   onClick={() => setShowAdmitCardSection(false)}
